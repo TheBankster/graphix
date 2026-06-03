@@ -1,0 +1,21 @@
+services:
+  
+  # GraphDB
+  graphdb:
+    image: ontotext/graphdb:11.2.1
+    container_name: graphix-graphdb
+    privileged: true
+    stdin_open: true
+    tty: true
+    ports:
+      - "7200:7200"
+      - "7300:7300"
+    # We use -D to pass this as a Java System Property
+    environment:
+      GDB_JAVA_OPTS: "-Dgraphdb.license.file=/opt/graphdb/home/conf/MYSELF_GRAPHDB_FREE_v11.2.license"
+    volumes:
+      - $HOME/graphdb:/opt/graphdb/home
+    deploy:
+      resources:
+        limits:
+          memory: 3G

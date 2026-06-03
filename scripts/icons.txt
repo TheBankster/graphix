@@ -1,0 +1,119 @@
+🚦 Status & Lifecycle
+
+⏳ Wait/Loading: ⏳ Waiting for Kafka to be ready...
+
+💤 Idle/Sleep: 💤 Container itam-graphdb is dormant.
+
+🔄 Restarting/Retrying: 🔄 Connection lost. Retrying in 5s...
+
+🛑 Hard Stop: 🛑 Critical failure: Disk space exhausted.
+
+💀 Process Killed: 💀 PID 1234 terminated.
+
+🔍 Debugging & Monitoring
+
+🐛 Bug Found: 🐛 Exception caught in main.py, line 42.
+
+📜 Log Entry: 📜 Appending metadata to transaction log.
+
+📡 Network/API: 📡 Pinging bootstrap server localhost:9092...
+
+🔑 Security/Auth: 🔑 AppArmor profile applied successfully.
+
+🏗️ Build/Infrastructure: 🏗️ Provisioning Docker volumes...
+
+💾 Data & Storage
+
+📦 Container/Package: 📦 Image bitnami/kafka pulled.
+
+📥 Input/Ingest: 📥 Receiving message from ITAM_TOPIC.
+
+📤 Output/Egest: 📤 Pushing event to GraphDB.
+
+🗄️ Database/Archive: 🗄️ Flushing heap to disk.
+
+🧹 Cleanup: 🧹 Pruning ghost containers...
+
+🗑️ Delete/Trash
+
+🛠️ Maintenance & Alerts
+
+🚧 Under Maintenance: 🚧 Migration in progress. Do not restart.
+
+⚡ Performance/Speed: ⚡ Latency detected: 450ms.
+
+🧨 Dangerous Action: 🧨 DANGER: Deleting /var/lib/docker!
+
+🩹 Hotfix/Patch: 🩹 Applying temporary listener fix.
+
+❌ Error
+
+✅ Success
+
+⚠️ Warning
+
+ⓘ "Just Informing You" (Status Updates)
+
+📢 Notice: 📢 Kafka cluster ID: itam-dev-01
+
+💡 FYI/Tip: 💡 Hint: You can use --force to bypass this check.
+
+🗣️ Verbose: 🗣️ Setting log level to DEBUG.
+
+📍 Location: 📍 Working directory: /home/mark/itam
+
+🆔 Reference: 🆔 Correlation ID: 980a941cc
+
+🗿 "Doing Nothing" (Passive States)
+
+🧘 Neutral/Nothing: 🧘 No changes detected. Doing nothing.
+
+🧊 Frozen/Stable: 🧊 Configuration is locked. No updates allowed.
+
+🙊 Silent Mode: 🙊 Quiet mode enabled. Suppressing logs.
+
+🎯 Goal Met: 🎯 Metadata fetch complete.
+
+🏁 Finished: 🏁 ITAM Startup sequence finished.
+
+🎈 Celebration: 🎈 Everything is green! Happy coding.
+
+🧪 Validation and Quality Assurance
+
+⚙️ Setup: ⚙️ Setting up test harness and mock GraphDB...
+
+📐 Schema Check: 📐 Validating JSON structure against ITAM-v1-schema...
+
+💎 Data Integrity: 💎 Checking for duplicate deployment IDs...
+
+🔣 Data Type: 🔣 Confirming 'time_checked' is ISO8601 format...
+
+🚫 Mismatch: 🚫 Mismatch found: Expected string, got RDF-URI.
+
+🔍 Filtered: 🔍 Filtered 3 null values from 'actual_with_cost_center'.
+
+🚥 Integration & Flow
+
+🛰️ In Transit: 🛰️ Sending JSON payload to ITAM_EVIDENCE topic...
+
+🎭 Mocked: 🎭 Using MockBroker (Real Kafka is offline).
+
+⏱️ Timed Out: ⏱️ Timeout reached: Kafka did not acknowledge in 5000ms.
+
+🕳️ Empty Set: 🕳️ List 'actual_without_cost_center' is empty. (Expected?)
+
+📏 Boundary Test: 📏 Testing with maximum allowed JSON payload (1MB).
+
+🏋️ Stress Test: 🏋️ Simulating 10,000 deployment records...
+
+▶️ Start/Play: ▶️ Start: Needle on the groove.
+
+⏹️ Stop: ⏹️ Stop: Braking platter...
+
+⏸️ Pause: ⏸️ Pause: Holding position at record #102.
+
+⏩ Fast Forward/Scan: ⏩ Scanning: Fast-forwarding through historical logs...
+
+⏭️ Skipping: ⏭️ Topic 'itam-events' already exists. Skipping creation.
+
+⏪ Rewind: ⏪ Rewind: Resetting to earliest available offset.
