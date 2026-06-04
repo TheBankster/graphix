@@ -1,12 +1,11 @@
 import sys
 import argparse
-import threading
-#from graphixconfig import LoadGraphixConfig, GraphDBRepoId
-#from tracing import trace
-#from graphdb import StartGraphClients, GraphDBLabel, UploadTtl, ClearRepository
+from graphixconfig import LoadGraphixConfig, GraphDBRepoId
+from tracing import trace
+from graphdb import StartGraphClients, GraphDBLabel, UploadTtl, ClearRepository
 
 def main(args):
-    # LoadGraphixConfig('graphix.config')
+    LoadGraphixConfig('graphix.config')
 
     parser = argparse.ArgumentParser(description='GRAPHIX Prototype')
     parser.add_argument(
@@ -25,11 +24,10 @@ def main(args):
         help="Clear the GRAPHIX repository")
     parsed_args = parser.parse_args(args)
 
-    # Connect to event and graph databases
-    # StartGraphClients()
+    # Connect to graph database
+    StartGraphClients()
 
     # Everything below assumes that the GRAPHIX repository already exists
-"""
     if parsed_args.schema:
         trace(f"📥 Schema file provided: {parsed_args.schema}")
         UploadTtl(
@@ -45,6 +43,6 @@ def main(args):
     elif parsed_args.func == "ClearRepo":
         ClearRepository(repo_id=GraphDBRepoId)
     return
-"""
+
 if __name__ == "__main__":
     main(sys.argv[1:])
