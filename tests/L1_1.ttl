@@ -1,5 +1,5 @@
 @prefix : <http://thefirm.com/graphix#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
+# @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 #################################################################
@@ -27,10 +27,20 @@
 :L1_PaymentInterface a :L1_Interface ;
     rdfs:label "Payment Gateway Interface" .
 
+:L1_NotificationInterface a :L1_Interface ;
+    rdfs:label "Notification Service Interface" .
+
 # --- Trust Boundaries ---
 :L1_PlatformBoundary a :L1_TrustBoundary ;
     rdfs:label "E-Commerce Platform Trust Boundary" .
 
+# --- Interface exposures and invocations ---
+:L1_Customer :invokesInterface :L1_ECommerceInterface .
+:L1_ECommercePlatform :exposesInterface :L1_ECommerceInterface .
+:L1_PaymentGateway :exposesInterface :L1_PaymentInterface .
+:L1_ECommercePlatform :invokesInterface :L1_NotificationInterface .
+
 # --- Deliberately missing
 # 1. L1_EcommercePlatform is not inside any trust boundary
-# 2. L1_NotificationService is not connected to any interface
+# 2. L1_PaymentGateway's interface is not invoked by any system
+# 3. L1_NotificationService is not exposing any interface

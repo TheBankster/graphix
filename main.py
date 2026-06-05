@@ -14,7 +14,7 @@ def main(args):
         metavar="FILE")
     parser.add_argument(
         "-d", "--data",
-        help="Path to the .ttl file containing initial data",
+        help="Path to the .ttl file containing data",
         metavar="FILE")
     parser.add_argument(
         "-c", "--clear-repo",

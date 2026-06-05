@@ -63,7 +63,7 @@
 
 :L2_API a owl:Class ;
     rdfs:subClassOf :L2_Element ;
-    rdfs:comment "Defines the boundary around a set of related containers." .
+    rdfs:comment "Defines an API to a Container." .
 
 :L2_Zone a owl:Class ;
     rdfs:subClassOf :L2_Element ;

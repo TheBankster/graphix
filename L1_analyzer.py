@@ -75,3 +75,35 @@ def MissingInvocations() -> list[str]:
             results.append(label)
 
     return results
+
+def L1_SemanticAnalyzer() -> bool:
+    result: bool = True
+    missingTrustBoundaries = MissingTrustBoundaries()
+    missingInterfaces = MissingInterfaces()
+    missingInvocations = MissingInvocations()
+
+    if missingInterfaces:
+        result = False
+        print(f"🛑 The following Software Systems are not exposing an Interface:")
+        for interface in missingInterfaces:
+            print(f"  - {interface}")
+
+    if missingTrustBoundaries:
+        result = False
+        print(f"🛑 The following Internal Systems are not inside a Trust Boundary:")
+        for system in missingTrustBoundaries:
+            print(f"  - {system}")
+
+    if missingInvocations:
+        result = False
+        print(f"🛑 The following Interfaces are not invoked by any Software System:")
+        for interface in missingInvocations:
+            print(f"  - {interface}")
+
+    return result
+
+def L2_Analyzer():
+    pass
+
+def L3_Analyzer():
+    pass

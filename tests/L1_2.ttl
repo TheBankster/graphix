@@ -1,0 +1,11 @@
+@prefix : <http://thefirm.com/graphix#> .
+# @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+#################################################################
+#    L1 E-Commerce Platform Example Fixes
+################################################################
+
+:L1_ECommercePlatform :invokesInterface :L1_PaymentInterface .
+:L1_NotificationService :exposesInterface :L1_NotificationInterface .
+:L1_ECommercePlatform :insideBoundary :L1_PlatformBoundary .
