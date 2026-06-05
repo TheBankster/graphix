@@ -1,0 +1,132 @@
+@prefix : <http://thefirm.com/graphix#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+#@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+#@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+#@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://thefirm.com/graphix> a owl:Ontology ;
+    rdfs:comment "RDF/OWL ontology mapping all SDLC stages for threat modeling, controls assessments and asset management." .
+
+#################################################################
+#    Classes (Taxonomy)
+#################################################################
+
+### Base Architecture Elements ###
+
+:Graphix_Element a owl:Class .
+
+### Level 1 (Context) Classes ###
+
+:L1_Element a owl:Class ;
+    rdfs:subClassOf :Graphix_Element .
+
+:L1_Actor a owl:Class ;
+    rdfs:subClassOf :L1_Element .
+
+:L1_SoftwareSystem a owl:Class ;
+    rdfs:subClassOf :L1_Element .
+
+:L1_ExternalSystem a owl:Class ;
+    rdfs:subClassOf :L1_SoftwareSystem ;
+    owl:disjointWith :L1_InternalSystem ;
+    rdfs:comment "Systems outside the organizational trust boundary." .
+
+:L1_InternalSystem a owl:Class ;
+    rdfs:subClassOf :L1_SoftwareSystem ;
+    rdfs:comment "Systems built and maintained within the organizational trust boundary." .
+
+:L1_TrustBoundary a owl:Class ;
+    rdfs:subClassOf :L1_Element ;
+    rdfs:comment "Defines the boundary between internal and external systems." .
+
+:L1_Interface a owl:Class ;
+    rdfs:subClassOf :L1_Element ;
+    rdfs:comment "Defines an interface through which systems communicate." .
+
+### Level 2 (Container) Classes ###
+
+:L2_Element a owl:Class ;
+    rdfs:subClassOf :Graphix_Element .
+
+:L2_Container a owl:Class ;
+    rdfs:subClassOf :L2_Element .
+
+:L2_WebService a owl:Class ;
+    rdfs:subClassOf :L2_Container .
+
+:L2_ComputeEngine a owl:Class ;
+    rdfs:subClassOf :L2_Container .
+
+:L2_DataStore a owl:Class ;
+    rdfs:subClassOf :L2_Container .
+
+:L2_API a owl:Class ;
+    rdfs:subClassOf :L2_Element ;
+    rdfs:comment "Defines the boundary around a set of related containers." .
+
+:L2_Zone a owl:Class ;
+    rdfs:subClassOf :L2_Element ;
+    rdfs:comment "Defines the boundary around a set of related containers." .
+
+#################################################################
+#    Object Properties (Relationships)
+#################################################################
+
+### L1 Level Relationships ###
+
+:L1_usesSystem a owl:ObjectProperty ;
+    rdfs:domain :L1_Actor ;
+    rdfs:range :L1_SoftwareSystem ;
+    rdfs:comment "Defines a user persona interacting with a system." .
+:L1_invokesInterface a owl:ObjectProperty ;
+    rdfs:domain :L1_InternalSystem ;
+    rdfs:range :L1_Interface ;
+    rdfs:comment "Internal System invoking an interface exposed by another system." .
+
+:L1_exposesInterface a owl:ObjectProperty ;
+    rdfs:domain :L1_SoftwareSystem ;
+    rdfs:range :L1_Interface ;
+    rdfs:comment "Defines an interface exposed by a system." .
+
+:L1_insideBoundary a owl:ObjectProperty ;
+    rdfs:domain :L1_InternalSystem ;
+    rdfs:range :L1_TrustBoundary ;
+    rdfs:comment "Indicates that an internal system is within a specific trust boundary." .
+
+### L2 Level Relationships ###
+
+:L2_insideZone a owl:ObjectProperty ;
+    rdfs:domain :L2_Container ;
+    rdfs:range :L2_Zone ;
+    rdfs:comment "Indicates that a container is within a specific zone." .
+
+### Cross-Level Relationships
+
+:L2_container_to_L1 a owl:ObjectProperty ;
+    rdfs:domain :L2_Container ;
+    rdfs:range :L1_InternalSystem ;
+    rdfs:comment "Maps a specific L2 Container to its parent L1 Internal Software System boundary." .
+
+:L2_API_to_L1 a owl:ObjectProperty ;
+    rdfs:domain :L2_API ;
+    rdfs:range :L1_Interface ;
+    rdfs:comment "Maps an L2 API to the L1 Interface it implements." .
+
+:L2_zone_to_L1 a owl:ObjectProperty ;
+    rdfs:domain :L2_Zone ;
+    rdfs:range :L1_TrustBoundary ;
+    rdfs:comment "Maps an L2 Zone to its parent L1 Trust Boundary." .
+
+#################################################################
+#    Data Properties (Threat Modeling and Control Attributes)
+#################################################################
+
+#:L2_hasCommunicationProtocol a owl:DatatypeProperty ;
+#    rdfs:domain :L2_Container ;
+#    rdfs:range xsd:string ;
+#    rdfs:comment "E.g., HTTPS, gRPC, AMQP." .
+
+#:L2_requiresEncryptionAtRest a owl:DatatypeProperty ;
+#    rdfs:domain :L2_DataStore ;
+#    rdfs:range xsd:boolean .

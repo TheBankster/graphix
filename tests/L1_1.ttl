@@ -1,0 +1,36 @@
+@prefix : <http://thefirm.com/graphix#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+#################################################################
+#    L1 E-Commerce Platform Example
+################################################################
+
+# --- Actors ---
+:L1_Customer a :L1_Actor ;
+    rdfs:label "E-Commerce Platform Customer" .
+
+# --- Software Systems ---
+:L1_ECommercePlatform a :L1_InternalSystem ;
+    rdfs:label "E-Commerce Platform" .
+
+:L1_PaymentGateway a :L1_ExternalSystem ;
+    rdfs:label "Payment Gateway" .
+
+:L1_NotificationService a :L1_ExternalSystem ;
+    rdfs:label "Notification Service" .
+
+# --- Interfaces ---
+:L1_ECommerceInterface a :L1_Interface ;
+    rdfs:label "E-Commerce Platform Interface" .
+
+:L1_PaymentInterface a :L1_Interface ;
+    rdfs:label "Payment Gateway Interface" .
+
+# --- Trust Boundaries ---
+:L1_PlatformBoundary a :L1_TrustBoundary ;
+    rdfs:label "E-Commerce Platform Trust Boundary" .
+
+# --- Deliberately missing
+# 1. L1_EcommercePlatform is not inside any trust boundary
+# 2. L1_NotificationService is not connected to any interface
