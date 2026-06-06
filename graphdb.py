@@ -3,8 +3,8 @@ import requests
 from graphixconfig import GraphDBHost, GraphDBPort, GraphDBRepoId
 from tracing import trace
 from enum import Enum
-from SPARQLWrapper import SPARQLWrapper
-from typing import Optional
+from SPARQLWrapper import JSON, SPARQLWrapper
+from typing import Any, cast, Dict, Optional
 
 _GraphQueryClient: Optional[SPARQLWrapper] = None
 _GraphUpdateClient: Optional[SPARQLWrapper] = None
@@ -34,7 +34,32 @@ def CheckRepositoryExists(host: str, port: int, repoid: str) -> bool:
     except Exception as e:
         trace(f"❌ Error checking repository existence: {e}")
         return False
-    
+
+# Look for elements without a UUID and auto-generate them
+def AddMissingUuids():
+    update: str = """
+        PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+        INSERT {
+            ?s :uuid ?uuid .
+        }
+        WHERE {
+            ?s a :Element .
+            FILTER NOT EXISTS { ?s :uuid ?any }
+            BIND(STRUUID() AS ?uuid)
+        }"""
+    try:
+        updater = GraphUpdateClient()
+        updater.setQuery(update)
+        from SPARQLWrapper import POST
+        updater.setMethod(POST)
+        updater.query()
+    except Exception as e:
+        trace(f"🧨 Failed to add missing UUIDs: {e}")
+        exit(1)
+
+    return
+
 # Generic function to upload TTL files to GraphDB.
 def UploadTtl(repo_id:str, file_path:str, label:GraphDBLabel):
     if not os.path.exists(file_path):
@@ -58,6 +83,8 @@ def UploadTtl(repo_id:str, file_path:str, label:GraphDBLabel):
     except Exception as e:
         trace(f"🧨 An error occurred during {label.value} upload: {e}")
         exit(1)
+
+    AddMissingUuids()
 
 # Clears all data from the specified GraphDB repository.
 def ClearRepository(repo_id:str):
@@ -98,3 +125,12 @@ def GraphUpdateClient() -> SPARQLWrapper:
     if _GraphUpdateClient is None:
         raise RuntimeError("🧨 Clients not initialized! Call StartGraphClients() first.")
     return _GraphUpdateClient
+
+def GetBindings(query: str) -> Any:
+    client = GraphQueryClient()
+    client.setQuery(query)
+    client.setReturnFormat(JSON)
+    raw_results = client.query().convert()
+    results = cast(Dict[str, Any], raw_results)
+    bindings = results["results"]["bindings"]
+    return bindings

@@ -1,9 +1,7 @@
 @prefix : <http://thefirm.com/graphix#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
-#@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-#@prefix xml: <http://www.w3.org/XML/1998/namespace> .
-#@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <http://thefirm.com/graphix> a owl:Ontology ;
     rdfs:comment "RDF/OWL ontology mapping all SDLC stages for threat modeling, controls assessments and asset management." .
@@ -75,12 +73,8 @@
 
 ### L1 Level Relationships ###
 
-:L1_usesSystem a owl:ObjectProperty ;
-    rdfs:domain :L1_Actor ;
-    rdfs:range :L1_SoftwareSystem ;
-    rdfs:comment "Defines a user persona interacting with a system." .
 :L1_invokesInterface a owl:ObjectProperty ;
-    rdfs:domain :L1_InternalSystem ;
+    rdfs:domain [ owl:unionOf (:L1_Actor :L1_InternalSystem) ];
     rdfs:range :L1_Interface ;
     rdfs:comment "Internal System invoking an interface exposed by another system." .
 
@@ -121,6 +115,13 @@
 #################################################################
 #    Data Properties (Threat Modeling and Control Attributes)
 #################################################################
+
+### Base Level ###
+
+:Graphix_UUID a owl:DatatypeProperty ;
+    rdfs:domain :Graphix_Element ;
+    rdfs:range xsd:uuid ;
+    rdfs:comment "A universally unique identifier for each element." .
 
 #:L2_hasCommunicationProtocol a owl:DatatypeProperty ;
 #    rdfs:domain :L2_Container ;

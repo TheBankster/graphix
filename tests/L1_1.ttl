@@ -1,5 +1,4 @@
 @prefix : <http://thefirm.com/graphix#> .
-# @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 #################################################################
@@ -36,9 +35,12 @@
 
 # --- Interface exposures and invocations ---
 :L1_Customer :invokesInterface :L1_ECommerceInterface .
+
 :L1_ECommercePlatform :exposesInterface :L1_ECommerceInterface .
-:L1_PaymentGateway :exposesInterface :L1_PaymentInterface .
+
 :L1_ECommercePlatform :invokesInterface :L1_NotificationInterface .
+
+:L1_PaymentGateway :exposesInterface :L1_PaymentInterface .
 
 # --- Deliberately missing
 # 1. L1_EcommercePlatform is not inside any trust boundary
