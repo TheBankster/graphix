@@ -92,7 +92,7 @@ def L1_SemanticAnalyzer() -> bool:
     missingInterfaces = MissingInterfaces()
     missingInvocations = MissingInvocations()
 
-    print("📐 L1 Semantic Analyzer Results:")
+    print("📐 Running L1 Semantic Analyzer...")
 
     if missingInterfaces:
         result = False
