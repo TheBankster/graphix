@@ -3,6 +3,7 @@ import argparse
 from graphixconfig import LoadGraphixConfig, GraphDBRepoId
 from tracing import trace
 from graphdb import StartGraphClients, GraphDBLabel, UploadTtl, ClearRepository
+from L1_analyzer import L1_SemanticAnalyzer
 
 def main(args):
     LoadGraphixConfig('graphix.config')
@@ -22,6 +23,12 @@ def main(args):
         const="ClearRepo",
         dest="func",
         help="Clear the GRAPHIX repository")
+    parser.add_argument(
+        "-a", "--semantic-analyzer",
+        action="store_const",
+        const="Analyze",
+        dest="func",
+        help="Rung the semantic analyzer on the entire repository")
     parsed_args = parser.parse_args(args)
 
     # Connect to graph database
@@ -42,6 +49,10 @@ def main(args):
             label=GraphDBLabel.DATA)
     elif parsed_args.func == "ClearRepo":
         ClearRepository(repo_id=GraphDBRepoId)
+    elif parsed_args.func == "Analyze":
+        L1_SemanticAnalyzer()
+    else:
+        parser.print_help()
     return
 
 if __name__ == "__main__":

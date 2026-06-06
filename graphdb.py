@@ -34,32 +34,6 @@ def CheckRepositoryExists(host: str, port: int, repoid: str) -> bool:
     except Exception as e:
         trace(f"❌ Error checking repository existence: {e}")
         return False
-
-# Look for elements without a UUID and auto-generate them
-def AddMissingUuids():
-    update: str = """
-        PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-
-        INSERT {
-            ?s :uuid ?uuid .
-        }
-        WHERE {
-            ?s a :Element .
-            FILTER NOT EXISTS { ?s :uuid ?any }
-            BIND(STRUUID() AS ?uuid)
-        }"""
-    try:
-        updater = GraphUpdateClient()
-        updater.setQuery(update)
-        from SPARQLWrapper import POST
-        updater.setMethod(POST)
-        updater.query()
-    except Exception as e:
-        trace(f"🧨 Failed to add missing UUIDs: {e}")
-        exit(1)
-
-    return
-
 # Generic function to upload TTL files to GraphDB.
 def UploadTtl(repo_id:str, file_path:str, label:GraphDBLabel):
     if not os.path.exists(file_path):
@@ -83,8 +57,6 @@ def UploadTtl(repo_id:str, file_path:str, label:GraphDBLabel):
     except Exception as e:
         trace(f"🧨 An error occurred during {label.value} upload: {e}")
         exit(1)
-
-    AddMissingUuids()
 
 # Clears all data from the specified GraphDB repository.
 def ClearRepository(repo_id:str):

@@ -34,15 +34,15 @@
     rdfs:label "E-Commerce Platform Trust Boundary" .
 
 # --- Interface exposures and invocations ---
-:L1_Customer :invokesInterface :L1_ECommerceInterface .
+:L1_Customer :L1_invokesInterface :L1_ECommerceInterface .
 
-:L1_ECommercePlatform :exposesInterface :L1_ECommerceInterface .
+:L1_ECommercePlatform :L1_exposesInterface :L1_ECommerceInterface .
 
-:L1_ECommercePlatform :invokesInterface :L1_NotificationInterface .
+:L1_ECommercePlatform :L1_invokesInterface :L1_NotificationInterface .
 
-:L1_PaymentGateway :exposesInterface :L1_PaymentInterface .
+:L1_PaymentGateway :L1_exposesInterface :L1_PaymentInterface .
 
 # --- Deliberately missing
-# 1. L1_EcommercePlatform is not inside any trust boundary
-# 2. L1_PaymentGateway's interface is not invoked by any system
-# 3. L1_NotificationService is not exposing any interface
+# 1. L1_NotificationService is not exposing any interface
+# 2. L1_EcommercePlatform is not inside any trust boundary
+# 3. L1_PaymentGateway's interface is not invoked by any system

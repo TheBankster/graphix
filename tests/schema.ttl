@@ -116,13 +116,6 @@
 #    Data Properties (Threat Modeling and Control Attributes)
 #################################################################
 
-### Base Level ###
-
-:Graphix_UUID a owl:DatatypeProperty ;
-    rdfs:domain :Graphix_Element ;
-    rdfs:range xsd:uuid ;
-    rdfs:comment "A universally unique identifier for each element." .
-
 #:L2_hasCommunicationProtocol a owl:DatatypeProperty ;
 #    rdfs:domain :L2_Container ;
 #    rdfs:range xsd:string ;
