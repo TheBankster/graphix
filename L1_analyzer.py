@@ -1,6 +1,5 @@
 from graphdb import GetBindings
-from stride import STRIDE
-from typing import List, Set, Tuple
+from typing import Set, Tuple
 
 ### L1 Semantic Analyizer Rules ###
 
@@ -16,7 +15,7 @@ def MissingTrustBoundaries() -> Set[Tuple[str,str]]:
         WHERE {
             ?system a :L1_InternalSystem .
             FILTER NOT EXISTS { ?system :L1_insideBoundary ?boundary . }
-            OPTIONAL { ?system rdfs:label ?label }
+            OPTIONAL { ?system rdfs:label ?label . }
         }"""
     bindings = GetBindings(query)
     results: Set[Tuple[str,str]] = set()
@@ -44,7 +43,7 @@ def MissingInterfaces() -> Set[Tuple[str,str]]:
         WHERE {
             ?system a :L1_SoftwareSystem .
             FILTER NOT EXISTS { ?system :L1_exposesInterface ?interface . }
-            OPTIONAL { ?system rdfs:label ?label }
+            OPTIONAL { ?system rdfs:label ?label . }
         }"""
     bindings = GetBindings(query)
     results: Set[Tuple[str,str]] = set()
@@ -68,9 +67,9 @@ def MissingInvocations() -> Set[Tuple[str,str]]:
 
         SELECT ?interface ?label
         WHERE {
-        ?interface a :L1_Interface .
-        FILTER NOT EXISTS { ?system :L1_invokesInterface ?interface . }
-        OPTIONAL { ?interface rdfs:label ?label }
+            ?interface a :L1_Interface .
+            FILTER NOT EXISTS { ?system :L1_invokesInterface ?interface . }
+            OPTIONAL { ?interface rdfs:label ?label . }
         }"""
     bindings = GetBindings(query)
     results: Set[Tuple[str,str]] = set()
@@ -116,31 +115,6 @@ def L1_SemanticAnalyzer() -> bool:
         print("🎈 L1 Semantic Check succeeded")
 
     return result
-
-### L1 Threat Modeling Rules ###
-
-# External actors acting internal systems present a spoofing threat
-def ExternalActorInternalSystemSpoofing() -> List[Tuple[str, str, STRIDE, str]]:
-    query: str = """
-        PREFIX : <http://thefirm.com/graphix#>
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-
-        SELECT ?actorLabel ?interfaceLabel
-        WHERE {
-            ?actor a :L1_Actor .
-            ?interface a :L1_Interface .
-            ?system a :L1_InternalSystem .
-            ?actor :L1_invokesInterface ?interface .
-            ?system :L1_exposes ?interface .
-            OPTIONAL { ?actor rdfs:label ?actorLabel, ?interface rdfs:label ?interfaceLabel }
-        }"""
-    bindings = GetBindings(query)
-    return [("a", "b", STRIDE.SPOOFING, "c")]
-
-def L1_ThreatModeler() -> List[Tuple[str, str, STRIDE, str]]:
-    results: List[Tuple[str, str, STRIDE, str]] = []
-    results.extend(ExternalActorInternalSystemSpoofing())
-    return results
 
 def L2_Analyzer():
     pass

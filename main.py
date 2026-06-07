@@ -4,6 +4,7 @@ from graphixconfig import LoadGraphixConfig, GraphDBRepoId
 from tracing import trace
 from graphdb import StartGraphClients, GraphDBLabel, UploadTtl, ClearRepository
 from L1_analyzer import L1_SemanticAnalyzer
+from L1_modeler import L1_ThreatModeler
 
 def main(args):
     LoadGraphixConfig('graphix.config')
@@ -29,6 +30,12 @@ def main(args):
         const="Analyze",
         dest="func",
         help="Rung the semantic analyzer on the entire repository")
+    parser.add_argument(
+        "-t", "--threat-modeler",
+        action="store_const",
+        const="ThreatModel",
+        dest="func",
+        help="Run the threat modeler on the entire repository")
     parsed_args = parser.parse_args(args)
 
     # Connect to graph database
@@ -51,6 +58,8 @@ def main(args):
         ClearRepository(repo_id=GraphDBRepoId)
     elif parsed_args.func == "Analyze":
         L1_SemanticAnalyzer()
+    elif parsed_args.func == "ThreatModel":
+        L1_ThreatModeler()
     else:
         parser.print_help()
     return
