@@ -14,6 +14,10 @@
 
 :Graphix_Element a owl:Class .
 
+:Graphix_TrustBoundary a owl:Class ;
+    rdfs:subClassOf :Graphix_Element ;
+    rdfs:comment "Defines the boundary of trust between entities." .
+
 ### Level 1 (Context) Classes ###
 
 :L1_Element a owl:Class ;
@@ -28,15 +32,15 @@
 :L1_ExternalSystem a owl:Class ;
     rdfs:subClassOf :L1_SoftwareSystem ;
     owl:disjointWith :L1_InternalSystem ;
-    rdfs:comment "Systems outside the organizational trust boundary." .
+    rdfs:comment "Systems outside the modeled system's perimeter." .
 
 :L1_InternalSystem a owl:Class ;
     rdfs:subClassOf :L1_SoftwareSystem ;
-    rdfs:comment "Systems built and maintained within the organizational trust boundary." .
+    rdfs:comment "Systems built and maintained within the modeled system's perimeter." .
 
-:L1_TrustBoundary a owl:Class ;
-    rdfs:subClassOf :L1_Element ;
-    rdfs:comment "Defines the boundary between internal and external systems." .
+:L1_InternalSystemPerimeter a owl:Class ;
+    rdfs:subClassOf :Graphix_TrustBoundary ;
+    rdfs:comment "Defines the security perimeter of an internal system." .
 
 :L1_Interface a owl:Class ;
     rdfs:subClassOf :L1_Element ;
@@ -83,9 +87,9 @@
     rdfs:range :L1_Interface ;
     rdfs:comment "Defines an interface exposed by a system." .
 
-:L1_insideBoundary a owl:ObjectProperty ;
+:L1_insidePerimeter a owl:ObjectProperty ;
     rdfs:domain :L1_InternalSystem ;
-    rdfs:range :L1_TrustBoundary ;
+    rdfs:range :L1_InternalSystemPerimeter ;
     rdfs:comment "Indicates that an internal system is within a specific trust boundary." .
 
 ### L2 Level Relationships ###
@@ -109,7 +113,7 @@
 
 :L2_zone_to_L1 a owl:ObjectProperty ;
     rdfs:domain :L2_Zone ;
-    rdfs:range :L1_TrustBoundary ;
+    rdfs:range :L1_InternalSystemPerimeter ;
     rdfs:comment "Maps an L2 Zone to its parent L1 Trust Boundary." .
 
 #################################################################

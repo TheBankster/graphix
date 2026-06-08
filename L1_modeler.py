@@ -87,7 +87,7 @@ def RenderResults(results: Set[Tuple[STRIDE, FrozenSet[Tuple[str, str, str, CONT
             print(f"    Attacker node: {entry[0]}")
             print(f"    Vulnerable node: {entry[1]}")
             print(f"    Mitigating entity: {entry[2]}")
-            print(f"    Mitigating Control: {entry[3].value}")
+            print(f"    Mitigating control: {entry[3].value}")
 
 
 def L1_ThreatModeler() -> Set[Tuple[STRIDE, FrozenSet[Tuple[str, str, str, CONTROL]]]]:

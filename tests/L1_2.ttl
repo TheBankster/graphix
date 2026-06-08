@@ -5,5 +5,5 @@
 ################################################################
 
 :L1_NotificationService :L1_exposesInterface :L1_NotificationInterface .
-:L1_ECommercePlatform :L1_insideBoundary :L1_PlatformBoundary .
+:L1_ECommercePlatform :L1_insidePerimeter :L1_PlatformBoundary .
 :L1_ECommercePlatform :L1_invokesInterface :L1_PaymentInterface .

@@ -3,10 +3,10 @@ from typing import Set, Tuple
 
 ### L1 Semantic Analyizer Rules ###
 
-# All Internal Systems must be inside a Trust Boundary
+# All Internal Systems must be inside a System Perimeter
 # The function returns a set of tuples where the first element is the URI of the offending node
 # and the second element is its human-readable label
-def MissingTrustBoundaries() -> Set[Tuple[str,str]]:
+def MissingSystemPerimeter() -> Set[Tuple[str,str]]:
     query: str = """
         PREFIX : <http://thefirm.com/graphix#>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -14,7 +14,7 @@ def MissingTrustBoundaries() -> Set[Tuple[str,str]]:
         SELECT ?system ?label
         WHERE {
             ?system a :L1_InternalSystem .
-            FILTER NOT EXISTS { ?system :L1_insideBoundary ?boundary . }
+            FILTER NOT EXISTS { ?system :L1_insidePerimeter ?perimeter . }
             OPTIONAL { ?system rdfs:label ?label . }
         }"""
     bindings = GetBindings(query)
@@ -87,7 +87,7 @@ def MissingInvocations() -> Set[Tuple[str,str]]:
 
 def L1_SemanticAnalyzer() -> bool:
     result: bool = True
-    missingTrustBoundaries = MissingTrustBoundaries()
+    missingSystemPerimeter = MissingSystemPerimeter()
     missingInterfaces = MissingInterfaces()
     missingInvocations = MissingInvocations()
 
@@ -99,10 +99,10 @@ def L1_SemanticAnalyzer() -> bool:
         for interface in missingInterfaces:
             print(f"  - {interface}")
 
-    if missingTrustBoundaries:
+    if missingSystemPerimeter:
         result = False
-        print("🛑 The following Internal Systems are not inside a Trust Boundary:")
-        for system in missingTrustBoundaries:
+        print("🛑 The following Internal Systems are not inside a System Perimeter:")
+        for system in missingSystemPerimeter:
             print(f"  - {system}")
 
     if missingInvocations:
