@@ -1,0 +1,8 @@
+@prefix : <http://thefirm.com/graphix#> .
+
+#################################################################
+#    L2 E-Commerce Platform Example Fixes
+#################################################################
+
+:L2_ProductDatabase :L2_insideTrustBoundary :L2_ApplicationZone .
+:L2_ProductDatabase :L2_container_to_L1 :L1_ECommercePlatform .

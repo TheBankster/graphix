@@ -4,6 +4,7 @@ from graphixconfig import LoadGraphixConfig, GraphDBRepoId
 from tracing import trace
 from graphdb import StartGraphClients, GraphDBLabel, UploadTtl, ClearRepository
 from L1_analyzer import L1_SemanticAnalyzer
+from L2_analyzer import L2_SemanticAnalyzer
 from L1_modeler import L1_ThreatModeler
 
 def main(args):
@@ -57,7 +58,10 @@ def main(args):
     elif parsed_args.func == "ClearRepo":
         ClearRepository(repo_id=GraphDBRepoId)
     elif parsed_args.func == "Analyze":
-        L1_SemanticAnalyzer()
+        checkPassed: bool
+        checkPassed = L1_SemanticAnalyzer()
+        if (checkPassed):
+            checkPassed = L2_SemanticAnalyzer()
     elif parsed_args.func == "ThreatModel":
         L1_ThreatModeler()
     else:

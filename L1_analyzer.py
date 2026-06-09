@@ -3,9 +3,10 @@ from typing import Set, Tuple
 
 ### L1 Semantic Analyizer Rules ###
 
+# All functions in this section return a set of tuples where the first element
+# is the URI of the offending node and the second element is its human-readable label
+
 # All Internal Systems must be inside a System Perimeter
-# The function returns a set of tuples where the first element is the URI of the offending node
-# and the second element is its human-readable label
 def MissingSystemPerimeter() -> Set[Tuple[str,str]]:
     query: str = """
         PREFIX : <http://thefirm.com/graphix#>
@@ -32,8 +33,6 @@ def MissingSystemPerimeter() -> Set[Tuple[str,str]]:
     return results
 
 # All Software Systems must expose an Interface
-# The function returns a set of tuples where the first element is the URI of the offending node
-# and the second element is its human-readable label
 def MissingInterfaces() -> Set[Tuple[str,str]]:
     query: str = """
         PREFIX : <http://thefirm.com/graphix#>
@@ -60,7 +59,7 @@ def MissingInterfaces() -> Set[Tuple[str,str]]:
     return results
 
 # All exposed Interfaces must be invoked by at least one Software System
-def MissingInvocations() -> Set[Tuple[str,str]]:
+def MissingInterfaceInvocations() -> Set[Tuple[str,str]]:
     query: str = """
         PREFIX : <http://thefirm.com/graphix#>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -87,9 +86,9 @@ def MissingInvocations() -> Set[Tuple[str,str]]:
 
 def L1_SemanticAnalyzer() -> bool:
     result: bool = True
-    missingSystemPerimeter = MissingSystemPerimeter()
     missingInterfaces = MissingInterfaces()
-    missingInvocations = MissingInvocations()
+    missingSystemPerimeter = MissingSystemPerimeter()
+    missingInvocations = MissingInterfaceInvocations()
 
     print("📐 Running L1 Semantic Analyzer...")
 
@@ -115,9 +114,3 @@ def L1_SemanticAnalyzer() -> bool:
         print("🎈 L1 Semantic Check succeeded")
 
     return result
-
-def L2_Analyzer():
-    pass
-
-def L3_Analyzer():
-    pass

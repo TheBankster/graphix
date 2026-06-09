@@ -89,7 +89,6 @@ def RenderResults(results: Set[Tuple[STRIDE, FrozenSet[Tuple[str, str, str, CONT
             print(f"    Mitigating entity: {entry[2]}")
             print(f"    Mitigating control: {entry[3].value}")
 
-
 def L1_ThreatModeler() -> Set[Tuple[STRIDE, FrozenSet[Tuple[str, str, str, CONTROL]]]]:
     results: Set[Tuple[STRIDE, FrozenSet[Tuple[str, str, str, CONTROL]]]] = set()
     results.update(ExternalActorInternalSystem())

@@ -1,7 +1,6 @@
 @prefix : <http://thefirm.com/graphix#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <http://thefirm.com/graphix> a owl:Ontology ;
     rdfs:comment "RDF/OWL ontology mapping all SDLC stages for threat modeling, controls assessments and asset management." .
@@ -67,7 +66,7 @@
     rdfs:subClassOf :L2_Element ;
     rdfs:comment "Defines an API to a Container." .
 
-:L2_Zone a owl:Class ;
+:L2_TrustBoundary a owl:Class ;
     rdfs:subClassOf :L2_Element ;
     rdfs:comment "Defines the boundary around a set of related containers." .
 
@@ -94,25 +93,35 @@
 
 ### L2 Level Relationships ###
 
-:L2_insideZone a owl:ObjectProperty ;
+:L2_insideTrustBoundary a owl:ObjectProperty ;
     rdfs:domain :L2_Container ;
-    rdfs:range :L2_Zone ;
+    rdfs:range :L2_TrustBoundary ;
     rdfs:comment "Indicates that a container is within a specific zone." .
+
+:L2_invokesAPI a owl:ObjectProperty ;
+    rdfs:domain :L2_Container ;
+    rdfs:range :L2_API ;
+    rdfs:comment "Containers invoking API." .
+
+:L2_exposesAPI a owl:ObjectProperty ;
+    rdfs:domain :L2_Container ;
+    rdfs:range :L2_API ;
+    rdfs:comment "Defines an API exposed by a container." .
 
 ### Cross-Level Relationships
 
 :L2_container_to_L1 a owl:ObjectProperty ;
     rdfs:domain :L2_Container ;
     rdfs:range :L1_InternalSystem ;
-    rdfs:comment "Maps a specific L2 Container to its parent L1 Internal Software System boundary." .
+    rdfs:comment "Maps a specific L2 Container to its parent L1 Internal Software System." .
 
 :L2_API_to_L1 a owl:ObjectProperty ;
     rdfs:domain :L2_API ;
     rdfs:range :L1_Interface ;
     rdfs:comment "Maps an L2 API to the L1 Interface it implements." .
 
-:L2_zone_to_L1 a owl:ObjectProperty ;
-    rdfs:domain :L2_Zone ;
+:L2_trustBoundary_to_L1 a owl:ObjectProperty ;
+    rdfs:domain :L2_TrustBoundary ;
     rdfs:range :L1_InternalSystemPerimeter ;
     rdfs:comment "Maps an L2 Zone to its parent L1 Trust Boundary." .
 

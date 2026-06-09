@@ -2,7 +2,7 @@
 
 #################################################################
 #    L1 E-Commerce Platform Example Fixes
-################################################################
+#################################################################
 
 :L1_NotificationService :L1_exposesInterface :L1_NotificationInterface .
 :L1_ECommercePlatform :L1_insidePerimeter :L1_PlatformBoundary .
