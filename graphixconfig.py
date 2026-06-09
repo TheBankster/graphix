@@ -15,12 +15,16 @@ GraphDBRepoId: str = DefaultGraphDBRepoId
 def LoadGraphixConfig(configFile: str) -> None:
     global GraphDBHost, GraphDBPort, GraphDBRepoId
     
-    if not os.path.exists(configFile):
-        print(f"⚠️ Configuration file {configFile} not found. Using defaults.")
-        return
+    # Determine the directory containing this script
+    program_dir = os.path.dirname(os.path.abspath(__file__))
 
     try:
-        with open(configFile, "rb") as f:
+        # Build the absolute path to the config file
+        config_path = os.path.join(program_dir, configFile)
+        if not os.path.exists(config_path):
+            raise FileNotFoundError(f"Graphix config file not found: {configFile}")
+
+        with open(config_path, "rb") as f:
             config = tomllib.load(f)
 
         # tomllib supports nested dictionaries naturally
