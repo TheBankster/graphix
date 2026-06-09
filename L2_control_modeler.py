@@ -7,7 +7,7 @@ from typing import List, Tuple
 #   1. Derivation  -- materialize :requiresControl obligations from the
 #      boundary-crossing policy: walk each call edge, read the caller/callee zone
 #      types, match a :BoundaryCrossingPolicy, and assert the controls it mandates
-#      on the exposed API. (Channel controls only; node-control obligations such as
+#      on the exposed interface. (Channel controls only; node-control obligations such as
 #      encryption-at-rest derive from data sensitivity and are asserted separately.)
 #   2. Satisfaction -- grade each obligation Open / Potential / Mitigated, branching
 #      on control scope:
@@ -21,14 +21,14 @@ PREFIX = """
 """
 
 # Stage 1: derive channel-control obligations from the boundary-crossing policy and
-# assert them as :requiresControl on the exposed API. Idempotent (re-runnable).
+# assert them as :requiresControl on the exposed interface. Idempotent (re-runnable).
 def DeriveChannelObligations() -> None:
     update: str = PREFIX + """
-        INSERT { ?api :requiresControl ?control . }
+        INSERT { ?interface :requiresControl ?control . }
         WHERE {
-            # the call edge: caller invokes an API that callee exposes
-            ?caller :L2_invokesAPI ?api .
-            ?callee :L2_exposesAPI ?api .
+            # the call edge: caller invokes an interface that callee exposes
+            ?caller :L2_invokesInterface ?interface .
+            ?callee :L2_exposesInterface ?interface .
             ?callee :L2_insideTrustBoundary ?calleeZone .
             ?calleeZone a ?toType .
 

@@ -1,5 +1,6 @@
 @prefix : <http://thefirm.com/graphix#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
@@ -12,7 +13,26 @@
 
 ### Base Architecture Elements ###
 
-:Graphix_Element a owl:Class .
+# The control vocabulary lives in the "Controls (Capabilities)" section below
+# (:Control + :ChannelControl/:NodeControl) and the Control Catalog. Requirement /
+# provision are expressed with :requiresControl / :capableOfControl / :providesControl
+# (see "Control Relationships"). Controls are first-class :Control individuals rather
+# than members of an enumerated set -- the model the team agreed to build on.
+#
+# Closed-set guard (from the coworker's original :CTL_ControlSet design, kept as a
+# validation/typing layer): any value of requires/provides on any element must be a
+# :Control. allValuesFrom (universal), not someValuesFrom.
+:Graphix_Element a owl:Class ;
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty :requiresControl ;
+        owl:allValuesFrom :Control
+    ],
+    [
+        a owl:Restriction ;
+        owl:onProperty :providesControl ;
+        owl:allValuesFrom :Control
+    ].
 
 :Graphix_TrustBoundary a owl:Class ;
     rdfs:subClassOf :Graphix_Element ;
@@ -66,12 +86,12 @@
 :L2_DataStore a owl:Class ;
     rdfs:subClassOf :L2_Container .
 
-:L2_API a owl:Class ;
+:L2_Interface a owl:Class ;
     rdfs:subClassOf :L2_Element ;
-    rdfs:comment "Defines an API to a Container." .
+    rdfs:comment "Defines an Interface to a Container." .
 
 :L2_TrustBoundary a owl:Class ;
-    rdfs:subClassOf :L2_Element ;
+    rdfs:subClassOf :Graphix_TrustBoundary ;
     rdfs:comment "Defines the boundary around a set of related containers." .
 
 ### Controls (Capabilities) ###
@@ -117,15 +137,15 @@
     rdfs:range :L2_TrustBoundary ;
     rdfs:comment "Indicates that a container is within a specific zone." .
 
-:L2_invokesAPI a owl:ObjectProperty ;
+:L2_invokesInterface a owl:ObjectProperty ;
     rdfs:domain :L2_Container ;
-    rdfs:range :L2_API ;
-    rdfs:comment "Containers invoking API." .
+    rdfs:range :L2_Interface ;
+    rdfs:comment "Container invoking an interface." .
 
-:L2_exposesAPI a owl:ObjectProperty ;
+:L2_exposesInterface a owl:ObjectProperty ;
     rdfs:domain :L2_Container ;
-    rdfs:range :L2_API ;
-    rdfs:comment "Defines an API exposed by a container." .
+    rdfs:range :L2_Interface ;
+    rdfs:comment "Defines an interface exposed by a container." .
 
 ### Cross-Level Relationships
 
@@ -139,8 +159,8 @@
     rdfs:range :L1_InternalSystem ;
     rdfs:comment "Maps a specific L2 Container to its parent L1 Internal Software System." .
 
-:L2_API_to_L1 a owl:ObjectProperty ;
-    rdfs:domain :L2_API ;
+:L2_Interface_to_L1 a owl:ObjectProperty ;
+    rdfs:domain :L2_Interface ;
     rdfs:range :L1_Interface ;
     rdfs:comment "Maps an L2 API to the L1 Interface it implements." .
 

@@ -19,22 +19,22 @@
 :L2_ProductDatabase a :L2_DataStore ;
     rdfs:label "E-Commerce Platform Product Database" .
 
-# --- APIs ---
-:L2_WebFrontEndAPI a :L2_API ;
-    rdfs:label "Web Front-End API" .
+# --- Interfaces ---
+:L2_WebFrontEndInterface a :L2_Interface ;
+    rdfs:label "Web Front-End Interface" .
 
-:L2_ProcessingEngineAPI a :L2_API ;
-    rdfs:label "E-Commerce Processing Engine API" .
+:L2_ProcessingEngineInterface a :L2_Interface ;
+    rdfs:label "E-Commerce Processing Engine Interface" .
 
-:L2_ProductDatabaseAPI a :L2_API ;
-    rdfs:label "E-Commerce Product Database API" .
+:L2_ProductDatabaseInterface a :L2_Interface ;
+    rdfs:label "E-Commerce Product Database Interface" .
 
-:L2_PaymentGatewayAPI a :L2_API ;
-    rdfs:label "Payment Gateway API" .
+:L2_PaymentGatewayInterface a :L2_Interface ;
+    rdfs:label "Payment Gateway Interface" .
 
 # Deliberately Missing
-#:L2_NotificationServiceAPI a :L2_API ;
-#    rdfs:label "Notification Service API" .
+#:L2_NotificationServiceInterface a :L2_Interface ;
+#    rdfs:label "Notification Service Interface" .
 
 # --- Trust Boundaries ---
 :L2_WebFrontEndZone a :L2_TrustBoundary , :PublicZone ;
@@ -64,35 +64,35 @@
 # Deliberately Missing
 #:L2_ApplicationZone :L2_trustBoundary_to_L1 :L1_InternalSystemPerimeter .
 
-# --- API to L1 Links ---
-:L2_WebFrontEndAPI :L2_API_to_L1 :L1_ECommerceInterface .
+# --- Interface to L1 Links ---
+:L2_WebFrontEndInterface :L2_Interface_to_L1 :L1_ECommerceInterface .
 
-:L2_PaymentGatewayAPI :L2_API_to_L1 :L1_PaymentInterface .
-
-# Deliberately missing
-#:L2_NotificationServiceAPI :L2_API_to_L1 :L1_NotificationInterface .
-
-# --- API exposures and invocations ---
-:L2_Customer :L2_invokesAPI :L2_WebFrontEndAPI .
-
-:L2_WebFrontEnd :L2_exposesAPI :L2_WebFrontEndAPI .
-
-:L2_ProcessingEngine :L2_exposesAPI :L2_ProcessingEngineAPI .
-
-:L2_ProductDatabase :L2_exposesAPI :L2_ProductDatabaseAPI .
-
-:L2_WebFrontEnd :L2_invokesAPI :L2_ProcessingEngineAPI .
-
-:L2_ProcessingEngine :L2_invokesAPI :L2_ProductDatabaseAPI .
-
-:L2_ProcessingEngine :L2_invokesAPI :L2_PaymentGatewayAPI .
+:L2_PaymentGatewayInterface :L2_Interface_to_L1 :L1_PaymentInterface .
 
 # Deliberately missing
-#:L2_ProcessingEngine :L2_invokesAPI :L2_NotificationServiceAPI .
+#:L2_NotificationServiceInterface :L2_Interface_to_L1 :L1_NotificationInterface .
+
+# --- Interface exposures and invocations ---
+:L2_Customer :L2_invokesInterface :L2_WebFrontEndInterface .
+
+:L2_WebFrontEnd :L2_exposesInterface :L2_WebFrontEndInterface .
+
+:L2_ProcessingEngine :L2_exposesInterface :L2_ProcessingEngineInterface .
+
+:L2_ProductDatabase :L2_exposesInterface :L2_ProductDatabaseInterface .
+
+:L2_WebFrontEnd :L2_invokesInterface :L2_ProcessingEngineInterface .
+
+:L2_ProcessingEngine :L2_invokesInterface :L2_ProductDatabaseInterface .
+
+:L2_ProcessingEngine :L2_invokesInterface :L2_PaymentGatewayInterface .
+
+# Deliberately missing
+#:L2_ProcessingEngine :L2_invokesInterface :L2_NotificationServiceInterface .
 
 # --- Control providers & obligations (L2) ---
 
-# A managed API gateway sits in front of the public web API. As an
+# A managed API gateway sits in front of the public web interface. As an
 # :APIGatewayContainer it is (under inference) capableOfControl Rate Limiting,
 # Client Authentication and Traffic Encryption -- but "capable" only, until
 # confirmed. We simulate one L3-confirmed control (Rate Limiting); the others
@@ -101,7 +101,7 @@
     rdfs:label "Public edge API gateway" .
 :L2_EdgeGateway :L2_insideTrustBoundary :L2_WebFrontEndZone .
 :L2_EdgeGateway :L2_container_to_L1 :L1_ECommercePlatform .
-:L2_EdgeGateway :protects :L2_WebFrontEndAPI .
+:L2_EdgeGateway :protects :L2_WebFrontEndInterface .
 :L2_EdgeGateway :providesControl :RateLimiting .   # simulated L3-confirmed config
 
 # Node-control obligations are DERIVED from data sensitivity (see schema

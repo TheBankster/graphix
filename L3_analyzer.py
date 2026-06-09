@@ -50,7 +50,7 @@ def ShadowInfrastructure() -> List[Tuple[str, ...]]:
 
 # Modeled components that nothing deployed realizes = intended-but-not-deployed.
 # Actors are excluded: they are external entities, not deployable infrastructure.
-# (Note: under OWL-RL an :L2_Actor that :L2_invokesAPI is also inferred an
+# (Note: under OWL-RL an :L2_Actor that :L2_invokesInterface is also inferred an
 # :L2_Container, because that property's domain is :L2_Container -- hence the
 # explicit actor exclusion rather than relying on container typing alone.)
 def UnrealizedModel() -> List[Tuple[str, ...]]:

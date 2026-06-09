@@ -29,11 +29,17 @@ def main(args):
         dest="func",
         help="Clear the GRAPHIX repository")
     parser.add_argument(
-        "-a", "--semantic-analyzer",
+        "-1", "--semantic-analyzer-1",
         action="store_const",
-        const="Analyze",
+        const="AnalyzeL1",
         dest="func",
-        help="Rung the semantic analyzer on the entire repository")
+        help="Rung the L1 semantic analyzer on the entire repository")
+    parser.add_argument(
+        "-2", "--semantic-analyzer-2",
+        action="store_const",
+        const="AnalyzeL2",
+        dest="func",
+        help="Rung the L2 semantic analyzer on the entire repository")
     parser.add_argument(
         "-t", "--threat-modeler",
         action="store_const",
@@ -88,11 +94,10 @@ def main(args):
             label=GraphDBLabel.DATA)
     elif parsed_args.func == "ClearRepo":
         ClearRepository(repo_id=GraphDBRepoId)
-    elif parsed_args.func == "Analyze":
-        checkPassed: bool
-        checkPassed = L1_SemanticAnalyzer()
-        if (checkPassed):
-            checkPassed = L2_SemanticAnalyzer()
+    elif parsed_args.func == "AnalyzeL1":
+        L1_SemanticAnalyzer()
+    elif parsed_args.func == "AnalyzeL2":
+        L2_SemanticAnalyzer()
     elif parsed_args.func == "ThreatModel":
         L1_ThreatModeler()
     elif parsed_args.func == "ControlModel":

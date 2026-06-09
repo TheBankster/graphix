@@ -8,10 +8,10 @@
 :L2_ProductDatabase :L2_insideTrustBoundary :L2_ApplicationZone .
 :L2_ProductDatabase :L2_container_to_L1 :L1_ECommercePlatform .
 :L2_ApplicationZone :L2_trustBoundary_to_L1 :L1_InternalSystemPerimeter .
-:L2_NotificationServiceAPI a :L2_API ;
-    rdfs:label "Notification Service API" .
-:L2_NotificationServiceAPI :L2_API_to_L1 :L1_NotificationInterface .
-:L2_ProcessingEngine :L2_invokesAPI :L2_NotificationServiceAPI .
+:L2_NotificationServiceInterface a :L2_Interface ;
+    rdfs:label "Notification Service Interface" .
+:L2_NotificationServiceInterface :L2_Interface_to_L1 :L1_NotificationInterface .
+:L2_ProcessingEngine :L2_invokesInterface :L2_NotificationServiceInterface .
 
 # --- Control mitigations (confirmed at L3) ---
 # The edge gateway's remaining capable-only controls are confirmed configured,
