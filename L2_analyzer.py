@@ -119,7 +119,21 @@ def UnlinkedAPI() -> Set[Tuple[str,str]]:
         SELECT ?API ?label
         WHERE {
             ?API a :L2_API .
+            # Condition 1: The API must be missing its L1 Interface mapping
             FILTER NOT EXISTS { ?API :L2_API_to_L1 ?interface . }
+            # Condition 2: EXCLUDE if it's an internal call within the same L1 Software System
+            FILTER NOT EXISTS {
+                ?Caller a :L2_Container .
+                ?Callee a :L2_Container .
+                ?InternalSystem a :L1_InternalSystem .
+                
+                ?Caller :L2_invokesAPI ?API .
+                ?Callee :L2_exposesAPI ?API .
+                
+                # Both containers map back to the same L1 System
+                ?Caller :L2_container_to_L1 ?InternalSystem .
+                ?Callee :L2_container_to_L1 ?InternalSystem .
+            }
             OPTIONAL { ?API rdfs:label ?label . }
         }"""
     bindings = GetBindings(query)
@@ -136,6 +150,33 @@ def UnlinkedAPI() -> Set[Tuple[str,str]]:
         
     return results
 
+def UnutilizedInterfaces() -> Set[Tuple[str,str]]:
+    query: str = """
+        PREFIX : <http://thefirm.com/graphix#>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+        SELECT ?interface ?label
+        WHERE {
+            ?interface a :L1_Interface .
+            FILTER NOT EXISTS { 
+                    ?API a :L2_API .
+                    ?API :L2_API_to_L1 ?interface . }
+            OPTIONAL { ?interface rdfs:label ?label . }
+        }"""
+    bindings = GetBindings(query)
+    results: Set[Tuple[str,str]] = set()
+
+    for result in bindings:
+        interface_binding = result.get("interface")
+        interface_uri = interface_binding["value"] if interface_binding else ""
+        
+        label_binding = result.get("label")
+        label = label_binding["value"] if label_binding else ""        
+
+        results.add((interface_uri, label))
+        
+    return results
+
 def L2_SemanticAnalyzer() -> bool:
     result: bool = True
     containersMissingTrustBoundary = ContainersMissingTrustBoundary()
@@ -143,6 +184,7 @@ def L2_SemanticAnalyzer() -> bool:
     unlinkedTrustBoundaries = UnlinkedTrustBoundaries()
     unlinkedContainers = UnlinkedContainers()
     unlinkedAPI = UnlinkedAPI()
+    unutilizedInterfaces = UnutilizedInterfaces()
 
     print("📐 Running L2 Semantic Analyzer...")
 
@@ -175,6 +217,12 @@ def L2_SemanticAnalyzer() -> bool:
         print("🛑 The following API are not linked to an Interface:")
         for API in unlinkedAPI:
             print(f"  - {API}")
+
+    if unutilizedInterfaces:
+        result = False
+        print("🛑 The following Interfaces are not linked to by any API:")
+        for interface in unutilizedInterfaces:
+            print(f"  - {interface}")
 
     if result:
         print("🎈 L2 Semantic Check succeeded")

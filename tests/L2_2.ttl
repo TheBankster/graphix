@@ -1,4 +1,5 @@
 @prefix : <http://thefirm.com/graphix#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 #################################################################
 #    L2 E-Commerce Platform Example Fixes
@@ -6,3 +7,8 @@
 
 :L2_ProductDatabase :L2_insideTrustBoundary :L2_ApplicationZone .
 :L2_ProductDatabase :L2_container_to_L1 :L1_ECommercePlatform .
+:L2_ApplicationZone :L2_trustBoundary_to_L1 :L1_InternalSystemPerimeter .
+:L2_NotificationServiceAPI a :L2_API ;
+    rdfs:label "Notification Service API" .
+:L2_NotificationServiceAPI :L2_API_to_L1 :L1_NotificationInterface .
+:L2_ProcessingEngine :L2_invokesAPI :L2_NotificationServiceAPI .

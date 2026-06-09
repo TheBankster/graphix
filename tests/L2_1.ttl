@@ -5,6 +5,10 @@
 #    L2 E-Commerce Platform Example
 #################################################################
 
+# --- Actors ---
+:L2_Customer a :L2_Actor ;
+    rdfs:label "E-Commerce Platform Customer" .
+
 # --- Containers ---
 :L2_WebFrontEnd a :L2_WebService ;
     rdfs:label "Web Front-End" .
@@ -24,6 +28,10 @@
 
 :L2_PaymentGatewayAPI a :L2_API ;
     rdfs:label "Payment Gateway API" .
+
+# Deliberately Missing
+#:L2_NotificationServiceAPI a :L2_API ;
+#    rdfs:label "Notification Service API" .
 
 # --- Trust Boundaries ---
 :L2_WebFrontEndZone a :L2_TrustBoundary ;
@@ -48,9 +56,22 @@
 # Deliberately Missing
 #:L2_ProductDatabase :L2_container_to_L1 :L1_ECommercePlatform .
 
-:L2_PaymentGatewayAPI :L2_API_to_L1 :L1_NotificationInterface .
+:L2_WebFrontEndZone :L2_trustBoundary_to_L1 :L1_InternalSystemPerimeter .
+
+# Deliberately Missing
+#:L2_ApplicationZone :L2_trustBoundary_to_L1 :L1_InternalSystemPerimeter .
+
+# --- API to L1 Links ---
+:L2_WebFrontEndAPI :L2_API_to_L1 :L1_ECommerceInterface .
+
+:L2_PaymentGatewayAPI :L2_API_to_L1 :L1_PaymentInterface .
+
+# Deliberately missing
+#:L2_NotificationServiceAPI :L2_API_to_L1 :L1_NotificationInterface .
 
 # --- API exposures and invocations ---
+:L2_Actor :L2_invokesAPI :L2_WebFrontEndAPI .
+
 :L2_WebFrontEnd :L2_exposesAPI :L2_WebFrontEndAPI .
 
 :L2_ProcessingEngine :L2_exposesAPI :L2_ProcessingEngineAPI .
@@ -58,3 +79,6 @@
 :L2_WebFrontEnd :L2_invokesAPI :L2_ProcessingEngineAPI .
 
 :L2_ProcessingEngine :L2_invokesAPI :L2_PaymentGatewayAPI .
+
+# Deliberately missing
+#:L2_ProcessingEngine :L2_invokesAPI :L2_NotificationServiceAPI .

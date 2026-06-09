@@ -50,6 +50,9 @@
 :L2_Element a owl:Class ;
     rdfs:subClassOf :Graphix_Element .
 
+:L2_Actor a owl:Class ;
+    rdfs:subClassOf :L1_Element .
+
 :L2_Container a owl:Class ;
     rdfs:subClassOf :L2_Element .
 
@@ -109,6 +112,11 @@
     rdfs:comment "Defines an API exposed by a container." .
 
 ### Cross-Level Relationships
+
+:L2_actor_to_L1 a owl:ObjectProperty ;
+    rdfs:domain :L2_Actor ;
+    rdfs:range :L1_Actor ;
+    rdfs:comment "Maps an L2 Actor to its parent L1 Actor." .
 
 :L2_container_to_L1 a owl:ObjectProperty ;
     rdfs:domain :L2_Container ;
