@@ -24,7 +24,10 @@
     rdfs:label "Web Front-End API" .
 
 :L2_ProcessingEngineAPI a :L2_API ;
-    rdfs:label "Processing Engine API" .
+    rdfs:label "E-Commerce Processing Engine API" .
+
+:L2_ProductDatabaseAPI a :L2_API ;
+    rdfs:label "E-Commerce Product Database API" .
 
 :L2_PaymentGatewayAPI a :L2_API ;
     rdfs:label "Payment Gateway API" .
@@ -76,7 +79,11 @@
 
 :L2_ProcessingEngine :L2_exposesAPI :L2_ProcessingEngineAPI .
 
+:L2_ProductDatabase :L2_exposesAPI :L2_ProductDatabaseAPI .
+
 :L2_WebFrontEnd :L2_invokesAPI :L2_ProcessingEngineAPI .
+
+:L2_ProcessingEngine :L2_invokesAPI :L2_ProductDatabaseAPI .
 
 :L2_ProcessingEngine :L2_invokesAPI :L2_PaymentGatewayAPI .
 
