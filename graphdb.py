@@ -3,7 +3,7 @@ import requests
 from graphixconfig import GraphDBHost, GraphDBPort, GraphDBRepoId
 from tracing import trace
 from enum import Enum
-from SPARQLWrapper import JSON, SPARQLWrapper
+from SPARQLWrapper import JSON, POST, SPARQLWrapper
 from typing import Any, cast, Dict, Optional
 
 _GraphQueryClient: Optional[SPARQLWrapper] = None
@@ -106,3 +106,10 @@ def GetBindings(query: str) -> Any:
     results = cast(Dict[str, Any], raw_results)
     bindings = results["results"]["bindings"]
     return bindings
+
+# Runs a SPARQL UPDATE (e.g. INSERT/DELETE) against the repository.
+def RunUpdate(update: str) -> None:
+    client = GraphUpdateClient()
+    client.setQuery(update)
+    client.setMethod(POST)
+    client.query()

@@ -1,6 +1,7 @@
 @prefix : <http://thefirm.com/graphix#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <http://thefirm.com/graphix> a owl:Ontology ;
     rdfs:comment "RDF/OWL ontology mapping all SDLC stages for threat modeling, controls assessments and asset management." .
@@ -73,6 +74,21 @@
     rdfs:subClassOf :L2_Element ;
     rdfs:comment "Defines the boundary around a set of related containers." .
 
+### Controls (Capabilities) ###
+
+:Control a owl:Class ;
+    rdfs:comment "A security control / capability that mitigates one or more threats. Members are enumerated as individuals in the Control Catalog below." .
+
+# Control scope determines how a requirement is satisfied (see docs/control-modeling.md):
+
+:ChannelControl a owl:Class ;
+    rdfs:subClassOf :Control ;
+    rdfs:comment "Applies to a communication flow/edge; satisfied by a provider that :protects the target." .
+
+:NodeControl a owl:Class ;
+    rdfs:subClassOf :Control ;
+    rdfs:comment "Intrinsic to an element; satisfied by the element providing it on itself (no :protects)." .
+
 #################################################################
 #    Object Properties (Relationships)
 #################################################################
@@ -132,6 +148,253 @@
     rdfs:domain :L2_TrustBoundary ;
     rdfs:range :L1_InternalSystemPerimeter ;
     rdfs:comment "Maps an L2 Zone to its parent L1 Trust Boundary." .
+
+### Control Relationships ###
+
+# These are intentionally rooted at :Graphix_Element so they can be used at any
+# level (an L1 Interface or an L2 API can both require/provide controls).
+
+# Obligation: this element needs the control. Usually derived by the threat
+# modeler from topology (e.g. a public-facing API requires Rate Limiting), but
+# may also be asserted directly.
+:requiresControl a owl:ObjectProperty ;
+    rdfs:domain :Graphix_Element ;
+    rdfs:range :Control ;
+    rdfs:comment "The element requires this control to mitigate an applicable threat." .
+
+# Potential: this element (or its archetype) could provide the control if
+# configured. Vanilla components that need configuration land here.
+:capableOfControl a owl:ObjectProperty ;
+    rdfs:domain :Graphix_Element ;
+    rdfs:range :Control ;
+    rdfs:comment "The element is capable of providing this control if configured." .
+
+# Realized: this element actually provides the control. Asserted only when
+# confirmed (ultimately from L3 evidence). Providing implies being capable.
+:providesControl a owl:ObjectProperty ;
+    rdfs:subPropertyOf :capableOfControl ;
+    rdfs:domain :Graphix_Element ;
+    rdfs:range :Control ;
+    rdfs:comment "The element actually provides this control. Implies :capableOfControl." .
+
+# Positioning: the subject applies its controls to traffic reaching the object.
+# A required control on an element is satisfied only by a provider that protects it.
+:protects a owl:ObjectProperty ;
+    rdfs:domain :Graphix_Element ;
+    rdfs:range :Graphix_Element ;
+    rdfs:comment "The subject applies its controls to traffic reaching the object." .
+
+#################################################################
+#    Control Catalog (Individuals)
+#################################################################
+
+# Canonical RDF definition of the controls mirrored by the CONTROL enum in
+# controls.py. The rdfs:label of each individual is the exact enum value string,
+# so the two representations can be round-tripped / cross-checked.
+
+:ClientAuthentication a :Control , :ChannelControl ;
+    rdfs:label "Client Authentication" .
+
+:ServerAuthentication a :Control , :ChannelControl ;
+    rdfs:label "Server Authentication" .
+
+:AccessControl a :Control , :NodeControl ;
+    rdfs:label "Access Control" .
+
+:RateLimiting a :Control , :ChannelControl ;
+    rdfs:label "Rate Limiting" .
+
+:TrafficEncryption a :Control , :ChannelControl ;
+    rdfs:label "Traffic Encryption" .
+
+:EncryptionAtRest a :Control , :NodeControl ;
+    rdfs:label "Encryption at Rest" .
+
+#################################################################
+#    Control-Provider Archetypes
+#################################################################
+
+# Vendor-neutral component archetypes that supply controls. Capability is asserted
+# once on the class via an OWL hasValue restriction, so any instance of the
+# archetype inherits it under inference -- no per-instance triples needed.
+#
+# Two tiers (see docs/control-modeling.md):
+#   - providesControl : the control is the component's purpose (holds by design).
+#   - capableOfControl: the component can supply it only when configured; the
+#                       realized :providesControl is confirmed later from L3 evidence.
+#
+# NOTE: hasValue inference requires an OWL-level ruleset in GraphDB (e.g. OWL-RL /
+# RDFS-Plus); plain RDFS will not materialize these. See progress doc.
+
+### Provides by design (the control is the component's job) ###
+
+:WAF a owl:Class ;
+    rdfs:subClassOf :L2_Container ,
+        [ a owl:Restriction ; owl:onProperty :providesControl ; owl:hasValue :RateLimiting ] ;
+    rdfs:comment "Web Application Firewall: rate limiting is part of its purpose." .
+
+:AuthenticationGateway a owl:Class ;
+    rdfs:subClassOf :L2_Container ,
+        [ a owl:Restriction ; owl:onProperty :providesControl ; owl:hasValue :ClientAuthentication ] ;
+    rdfs:comment "Dedicated authentication gateway / identity-aware proxy: authenticates callers by design." .
+
+### Capable only when configured (general-purpose components) ###
+
+:ReverseProxy a owl:Class ;
+    rdfs:subClassOf :L2_Container ,
+        [ a owl:Restriction ; owl:onProperty :capableOfControl ; owl:hasValue :RateLimiting ] ,
+        [ a owl:Restriction ; owl:onProperty :capableOfControl ; owl:hasValue :TrafficEncryption ] ,
+        [ a owl:Restriction ; owl:onProperty :capableOfControl ; owl:hasValue :ClientAuthentication ] ;
+    rdfs:comment "Reverse proxy (e.g. nginx): can rate-limit, terminate TLS, and authenticate -- only when configured." .
+
+:APIGatewayContainer a owl:Class ;
+    rdfs:subClassOf :L2_Container ,
+        [ a owl:Restriction ; owl:onProperty :capableOfControl ; owl:hasValue :RateLimiting ] ,
+        [ a owl:Restriction ; owl:onProperty :capableOfControl ; owl:hasValue :ClientAuthentication ] ,
+        [ a owl:Restriction ; owl:onProperty :capableOfControl ; owl:hasValue :TrafficEncryption ] ;
+    rdfs:comment "Managed API gateway (e.g. AWS API Gateway): rate limiting, auth, and TLS available via configuration." .
+
+:LoadBalancer a owl:Class ;
+    rdfs:subClassOf :L2_Container ,
+        [ a owl:Restriction ; owl:onProperty :capableOfControl ; owl:hasValue :TrafficEncryption ] ;
+    rdfs:comment "Load balancer: capable of TLS termination when a TLS listener is configured." .
+
+#################################################################
+#    Zone Trust Classification & Boundary-Crossing Policy
+#################################################################
+
+# Trust-level archetypes for zones / perimeters. A concrete zone is multi-typed,
+# e.g.  :SomeZone a :L2_TrustBoundary , :PublicZone .  Policies (below) are written
+# over these *types* so one policy applies across every environment, not per instance.
+
+:UntrustedZone a owl:Class ;
+    rdfs:subClassOf :Graphix_TrustBoundary ;
+    rdfs:comment "Outside the organisation's control (e.g. the public Internet)." .
+
+:PublicZone a owl:Class ;
+    rdfs:subClassOf :Graphix_TrustBoundary ;
+    rdfs:comment "Org-controlled but externally exposed tier (DMZ / web tier)." .
+
+:ApplicationZone a owl:Class ;
+    rdfs:subClassOf :Graphix_TrustBoundary ;
+    rdfs:comment "Internal application / processing tier." .
+
+:DataZone a owl:Class ;
+    rdfs:subClassOf :Graphix_TrustBoundary ;
+    rdfs:comment "Internal data tier (databases, stores)." .
+
+# --- Boundary-crossing policy: the reusable security standard ---
+# "Traffic crossing from a zone of type X into a zone of type Y mandates controls Z."
+# Directional (from/to are ordered, so ingress and egress can differ). A crossing
+# with no matching policy mandates nothing -- e.g. an internal app-tier hop.
+
+:BoundaryCrossingPolicy a owl:Class ;
+    rdfs:comment "Declares the controls mandated when traffic crosses between two zone types." .
+
+:crossingFromType a owl:ObjectProperty ;
+    rdfs:domain :BoundaryCrossingPolicy ;
+    rdfs:range owl:Class ;
+    rdfs:comment "Source zone type of the crossing (a zone trust archetype)." .
+
+:crossingToType a owl:ObjectProperty ;
+    rdfs:domain :BoundaryCrossingPolicy ;
+    rdfs:range owl:Class ;
+    rdfs:comment "Destination zone type of the crossing (a zone trust archetype)." .
+
+:mandatesControl a owl:ObjectProperty ;
+    rdfs:domain [ owl:unionOf (:BoundaryCrossingPolicy :DataProtectionPolicy) ] ;
+    rdfs:range :Control ;
+    rdfs:comment "A control required by a policy (boundary-crossing or data-protection)." .
+
+# --- Example policy (configuration; could later live in a separate policy file) ---
+
+:Policy_Untrusted_to_Public a :BoundaryCrossingPolicy ;
+    rdfs:label "Untrusted -> Public crossing" ;
+    :crossingFromType :UntrustedZone ;
+    :crossingToType :PublicZone ;
+    :mandatesControl :TrafficEncryption , :ClientAuthentication , :RateLimiting .
+
+# NOTE: no Public -> Application policy is defined, on purpose -- under this standard
+# an internal app-tier hop mandates no transport controls.
+
+#################################################################
+#    Data Sensitivity Classification & Node-Control Policy
+#################################################################
+
+# Node controls (Encryption at Rest, Access Control) are obligations intrinsic to an
+# element, driven by the sensitivity of the data it handles -- not by a trust-boundary
+# crossing. This mirrors the boundary-crossing policy above, but keys on a node's data
+# sensitivity instead of a (from, to) zone-type pair. A node with no sensitivity
+# assigned mandates nothing, exactly like a crossing with no matching policy.
+
+:DataSensitivity a owl:Class ;
+    rdfs:comment "A data sensitivity / classification level. Members are the individuals below." .
+
+:Public a :DataSensitivity ;
+    rdfs:label "Public" .
+
+:Internal a :DataSensitivity ;
+    rdfs:label "Internal" .
+
+:Confidential a :DataSensitivity ;
+    rdfs:label "Confidential" .
+
+:handlesDataOfSensitivity a owl:ObjectProperty ;
+    rdfs:domain :Graphix_Element ;
+    rdfs:range :DataSensitivity ;
+    rdfs:comment "The element stores / handles data of this sensitivity level." .
+
+:DataProtectionPolicy a owl:Class ;
+    rdfs:comment "Declares the node controls mandated for data of a given sensitivity." .
+
+:appliesToSensitivity a owl:ObjectProperty ;
+    rdfs:domain :DataProtectionPolicy ;
+    rdfs:range :DataSensitivity ;
+    rdfs:comment "The data sensitivity level this policy governs." .
+
+# --- Example policy (configuration; could later live in a separate policy file) ---
+
+:Policy_Confidential_Data a :DataProtectionPolicy ;
+    rdfs:label "Confidential data protection" ;
+    :appliesToSensitivity :Confidential ;
+    :mandatesControl :EncryptionAtRest , :AccessControl .
+
+#################################################################
+#    L3 Implementation Layer (as-built, extracted from IaC)
+#################################################################
+
+# L1/L2 capture the *intended* architecture (authored by the threat modeler).
+# L3 captures the *as-built* implementation, extracted from Infrastructure-as-Code
+# (e.g. Terraform). An L3 element is a concrete deployed resource; it does not
+# replace its L2 counterpart, it :L3_realizes it -- mirroring the existing
+# cross-layer links (:L2_container_to_L1 etc.). Keeping L3 as its own layer linked
+# to L2 (rather than merging facts onto L2 individuals) is what makes conformance
+# checking possible: we can ask where as-built and intended disagree.
+
+:L3_Element a owl:Class ;
+    rdfs:subClassOf :Graphix_Element ;
+    rdfs:comment "A concrete deployed resource extracted from IaC (the as-built layer)." .
+
+# --- Correspondence link (as-built -> intended) ---
+# Asserted from a `graphix_l2` resource tag (developer-declared) or a
+# security-owned mapping overlay (threat-modeler-declared). An L3 element with no
+# :L3_realizes target is unmodeled infrastructure; an L2 element nothing realizes
+# is modeled-but-not-deployed -- both surfaced by the L3 conformance analyzer.
+:L3_realizes a owl:ObjectProperty ;
+    rdfs:domain :L3_Element ;
+    rdfs:range :L2_Element ;
+    rdfs:comment "The L2 (intended) element this deployed resource implements." .
+
+# --- Provenance ---
+:L3_awsResourceType a owl:DatatypeProperty ;
+    rdfs:domain :L3_Element ;
+    rdfs:range xsd:string ;
+    rdfs:comment "The IaC resource type this element was extracted from (e.g. aws_db_instance)." .
+
+# Control evidence is carried on L3 elements with the existing :providesControl /
+# :capableOfControl vocabulary (no new property needed). The reconciliation step
+# propagates that evidence across :L3_realizes onto the L2 obligation, so the
+# Step 7 satisfaction grading runs on real config instead of simulated triples.
 
 #################################################################
 #    Data Properties (Threat Modeling and Control Attributes)

@@ -6,6 +6,9 @@ from graphdb import StartGraphClients, GraphDBLabel, UploadTtl, ClearRepository
 from L1_analyzer import L1_SemanticAnalyzer
 from L2_analyzer import L2_SemanticAnalyzer
 from L1_modeler import L1_ThreatModeler
+from L2_control_modeler import L2_ControlModeler
+from L3_extractor import ExtractIaC
+from L3_analyzer import L3_Reconciler
 
 def main(args):
     LoadGraphixConfig('graphix.config')
@@ -37,6 +40,23 @@ def main(args):
         const="ThreatModel",
         dest="func",
         help="Run the threat modeler on the entire repository")
+    parser.add_argument(
+        "-m", "--control-modeler",
+        action="store_const",
+        const="ControlModel",
+        dest="func",
+        help="Derive control obligations from zone-crossing policy and report satisfaction")
+    parser.add_argument(
+        "-x", "--extract-iac",
+        help="Extract L3 (as-built) elements from the Terraform in DIR and load them",
+        metavar="DIR")
+    parser.add_argument(
+        "-r", "--reconcile",
+        action="store_const",
+        const="Reconcile",
+        dest="func",
+        help="Reconcile L3 (as-built) against the L1/L2 model: propagate control "
+             "evidence and report conformance")
     parsed_args = parser.parse_args(args)
 
     # Connect to graph database
@@ -55,6 +75,17 @@ def main(args):
             repo_id=GraphDBRepoId,
             file_path=parsed_args.data,
             label=GraphDBLabel.DATA)
+    elif parsed_args.extract_iac:
+        trace(f"🏗️  Extracting L3 from IaC: {parsed_args.extract_iac}")
+        # Write the fixture into tests/ alongside the L1/L2 fixtures, regardless of
+        # whether we were invoked from the repo root or from tests/ (as runall.sh does).
+        import os
+        out_dir = os.path.join(os.path.dirname(os.path.normpath(parsed_args.extract_iac)), "tests")
+        out_path = ExtractIaC(parsed_args.extract_iac, os.path.join(out_dir, "L3_extracted.ttl"))
+        UploadTtl(
+            repo_id=GraphDBRepoId,
+            file_path=out_path,
+            label=GraphDBLabel.DATA)
     elif parsed_args.func == "ClearRepo":
         ClearRepository(repo_id=GraphDBRepoId)
     elif parsed_args.func == "Analyze":
@@ -64,6 +95,10 @@ def main(args):
             checkPassed = L2_SemanticAnalyzer()
     elif parsed_args.func == "ThreatModel":
         L1_ThreatModeler()
+    elif parsed_args.func == "ControlModel":
+        L2_ControlModeler()
+    elif parsed_args.func == "Reconcile":
+        L3_Reconciler()
     else:
         parser.print_help()
     return

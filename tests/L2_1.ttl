@@ -37,10 +37,10 @@
 #    rdfs:label "Notification Service API" .
 
 # --- Trust Boundaries ---
-:L2_WebFrontEndZone a :L2_TrustBoundary ;
+:L2_WebFrontEndZone a :L2_TrustBoundary , :PublicZone ;
     rdfs:label "Trust boundary around the web front end" .
 
-:L2_ApplicationZone a :L2_TrustBoundary ;
+:L2_ApplicationZone a :L2_TrustBoundary , :ApplicationZone ;
     rdfs:label "Trust boundary around the processing engine" .
 
 # Links to Trust Boundaries
@@ -73,7 +73,7 @@
 #:L2_NotificationServiceAPI :L2_API_to_L1 :L1_NotificationInterface .
 
 # --- API exposures and invocations ---
-:L2_Actor :L2_invokesAPI :L2_WebFrontEndAPI .
+:L2_Customer :L2_invokesAPI :L2_WebFrontEndAPI .
 
 :L2_WebFrontEnd :L2_exposesAPI :L2_WebFrontEndAPI .
 
@@ -89,3 +89,23 @@
 
 # Deliberately missing
 #:L2_ProcessingEngine :L2_invokesAPI :L2_NotificationServiceAPI .
+
+# --- Control providers & obligations (L2) ---
+
+# A managed API gateway sits in front of the public web API. As an
+# :APIGatewayContainer it is (under inference) capableOfControl Rate Limiting,
+# Client Authentication and Traffic Encryption -- but "capable" only, until
+# confirmed. We simulate one L3-confirmed control (Rate Limiting); the others
+# stay capable-only, so the satisfaction check reports them Potential.
+:L2_EdgeGateway a :APIGatewayContainer ;
+    rdfs:label "Public edge API gateway" .
+:L2_EdgeGateway :L2_insideTrustBoundary :L2_WebFrontEndZone .
+:L2_EdgeGateway :L2_container_to_L1 :L1_ECommercePlatform .
+:L2_EdgeGateway :protects :L2_WebFrontEndAPI .
+:L2_EdgeGateway :providesControl :RateLimiting .   # simulated L3-confirmed config
+
+# Node-control obligations are DERIVED from data sensitivity (see schema
+# :DataProtectionPolicy): the product database handles confidential data, so the
+# control modeler derives :requiresControl EncryptionAtRest + AccessControl on it.
+# No provider in L2_1 -> the satisfaction check reports these Open.
+:L2_ProductDatabase :handlesDataOfSensitivity :Confidential .
