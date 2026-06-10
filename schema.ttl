@@ -32,15 +32,15 @@
         ) ;
     rdfs:comment "A set of controls that mitigate threats." .
 
-:CTL_RequiredControls a owl:ObjectProperty ;
+:CTL_RequiresControls a owl:ObjectProperty ;
     rdfs:domain :Graphix_Element ;
     rdfs:range :CTL_ControlSet ;
-    rdfs:comment "Associates an architecture element with the controls that mitigate its threats." .
+    rdfs:comment "Associates an architecture element with the controls required to mitigate its threats." .
 
 :Graphix_Element a owl:Class ;
     rdfs:subClassOf [  # NOTE: _not_ using :someValuesFrom here to enforce that all mitigations must be from the defined set.
         a owl:Restriction ;
-        owl:onProperty :CTL_RequiredControls ;
+        owl:onProperty :CTL_RequiresControls ;
         owl:allValuesFrom :CTL_ControlSet
     ].
 

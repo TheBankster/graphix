@@ -36,21 +36,21 @@ def ExternalActorInternalSystem() -> Set[Tuple[STRIDE, FrozenSet[Tuple[str, str,
 
             # Check interface for endpoint controls
             OPTIONAL { 
-                ?interface :CTL_RequiredControls :CTL_ClientAuthentication . 
+                ?interface :CTL_RequiresControls :CTL_ClientAuthentication . 
                 BIND(true AS ?hasClientAuth) 
             }
             OPTIONAL { 
-                ?interface :CTL_RequiredControls :CTL_RateLimiting . 
+                ?interface :CTL_RequiresControls :CTL_RateLimiting . 
                 BIND(true AS ?hasRateLimit) 
             }
             OPTIONAL { 
-                ?interface :CTL_RequiredControls :CTL_DataInTransitEncryption . 
+                ?interface :CTL_RequiresControls :CTL_DataInTransitEncryption . 
                 BIND(true AS ?hasTransitEnc) 
             }
 
             # Check internal system for logic/authorization controls
             OPTIONAL { 
-                ?system :CTL_RequiredControls :CTL_AccessControl . 
+                ?system :CTL_RequiresControls :CTL_AccessControl . 
                 BIND(true AS ?hasAccessControl) 
             }
         }"""
@@ -108,11 +108,11 @@ def InternalSystemExternalSystem() -> Set[Tuple[STRIDE, FrozenSet[Tuple[str, str
 
             # Bind a variable if the mitigation exists, otherwise it remains unbound
             OPTIONAL { 
-                ?internalSystem :CTL_RequiredControls :CTL_ServerAuthentication . 
+                ?internalSystem :CTL_RequiresControls :CTL_ServerAuthentication . 
                 BIND(true AS ?hasAuth)
             }
             OPTIONAL { 
-                ?internalSystem :CTL_RequiredControls :CTL_DataInTransitEncryption . 
+                ?internalSystem :CTL_RequiresControls :CTL_DataInTransitEncryption . 
                 BIND(true AS ?hasEncryption)
             }
         }"""
