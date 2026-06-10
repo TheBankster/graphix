@@ -75,7 +75,7 @@ def InternalSystemExternalSystem() -> Set[Tuple[STRIDE, FrozenSet[Tuple[str, str
         internal_system_uri = internal_system_uri_binding["value"] if internal_system_uri_binding else ""
         external_system_uri = external_system_uri_binding["value"] if external_system_uri_binding else ""
 
-        results.add((STRIDE.SPOOFING, frozenset([(external_system_uri, internal_system_uri, internal_system_uri, CONTROL.CLIENT_AUTHENTICATION)])))
+        results.add((STRIDE.SPOOFING, frozenset([(external_system_uri, internal_system_uri, internal_system_uri, CONTROL.SERVER_AUTHENTICATION)])))
         results.add((STRIDE.INFORMATION_DISCLOSURE, frozenset([(external_system_uri, internal_system_uri, internal_system_uri, CONTROL.TRAFFIC_ENCRYPTION)])))
 
     return results
