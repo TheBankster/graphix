@@ -111,6 +111,6 @@ def L1_SemanticAnalyzer() -> bool:
             print(f"  - {interface}")
 
     if result:
-        print("🎈 L1 Semantic Check succeeded")
+        print("✅ L1 Semantic Check succeeded")
 
     return result

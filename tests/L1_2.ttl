@@ -1,7 +1,7 @@
 @prefix : <http://thefirm.com/graphix#> .
 
 #################################################################
-#    L1 E-Commerce Platform Example Fixes
+#    L1 E-Commerce Platform Example Semantic Fixes
 #################################################################
 
 :L1_NotificationService :L1_exposesInterface :L1_NotificationInterface .

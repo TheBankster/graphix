@@ -23,64 +23,132 @@ def ExternalActorInternalSystem() -> Set[Tuple[STRIDE, FrozenSet[Tuple[str, str,
         PREFIX : <http://thefirm.com/graphix#>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-        SELECT ?actor ?interface ?system
+        SELECT ?actor ?interface ?system ?hasClientAuth ?hasRateLimit ?hasAccessControl ?hasTransitEnc
         WHERE {
+            # Core topology traversal
             ?actor a :L1_Actor .
             ?interface a :L1_Interface .
             ?system a :L1_InternalSystem .
+            
             ?actor :L1_invokesInterface ?interface .
             ?system :L1_exposesInterface ?interface .
+
+            # Check interface for endpoint controls
+            OPTIONAL { 
+                ?interface :CTL_RequiredControls :CTL_ClientAuthentication . 
+                BIND(true AS ?hasClientAuth) 
+            }
+            OPTIONAL { 
+                ?interface :CTL_RequiredControls :CTL_RateLimiting . 
+                BIND(true AS ?hasRateLimit) 
+            }
+            OPTIONAL { 
+                ?interface :CTL_RequiredControls :CTL_DataInTransitEncryption . 
+                BIND(true AS ?hasTransitEnc) 
+            }
+
+            # Check internal system for logic/authorization controls
+            OPTIONAL { 
+                ?system :CTL_RequiredControls :CTL_AccessControl . 
+                BIND(true AS ?hasAccessControl) 
+            }
         }"""
     bindings = GetBindings(query)
     results: Set[Tuple[STRIDE, FrozenSet[Tuple[str, str, str, CONTROL]]]] = set()
 
     for result in bindings:
-        actor_uri_binding = result.get("actor")
-        interface_uri_binding = result.get("interface")
-        system_uri_binding = result.get("system")
+        actor_uri = result.get("actor", {}).get("value", "")
+        interface_uri = result.get("interface", {}).get("value", "")
+        system_uri = result.get("system", {}).get("value", "")
 
-        actor_uri = actor_uri_binding["value"] if actor_uri_binding else ""
-        interface_uri = interface_uri_binding["value"] if interface_uri_binding else ""
-        system_uri = system_uri_binding["value"] if system_uri_binding else ""
+        # Spoofing -> Mitigated by Client Authentication at the Interface
+        if "hasClientAuth" not in result:
+            results.add((
+                STRIDE.SPOOFING, 
+                frozenset([(actor_uri, system_uri, interface_uri, CONTROL.CLIENT_AUTHENTICATION)])
+            ))
 
-        results.add((STRIDE.SPOOFING, frozenset([(actor_uri, system_uri, interface_uri, CONTROL.CLIENT_AUTHENTICATION)])))
-        results.add((STRIDE.DENIAL_OF_SERVICE, frozenset([(actor_uri, system_uri, interface_uri, CONTROL.RATE_LIMITING)])))
-        results.add((STRIDE.ELEVATION_OF_PRIVILEGE, frozenset([(actor_uri, system_uri, system_uri, CONTROL.ACCESS_CONTROL)])))
-        results.add((STRIDE.INFORMATION_DISCLOSURE, frozenset([(actor_uri, system_uri, interface_uri, CONTROL.DATA_IN_TRANSIT_ENCRYPTION)])))
+        # Denial of Service -> Mitigated by Rate Limiting at the Interface
+        if "hasRateLimit" not in result:
+            results.add((
+                STRIDE.DENIAL_OF_SERVICE, 
+                frozenset([(actor_uri, system_uri, interface_uri, CONTROL.RATE_LIMITING)])
+            ))
+
+        # Elevation of Privilege -> Mitigated by Access Control at the Internal System
+        if "hasAccessControl" not in result:
+            results.add((
+                STRIDE.ELEVATION_OF_PRIVILEGE, 
+                frozenset([(actor_uri, system_uri, system_uri, CONTROL.ACCESS_CONTROL)])
+            ))
+
+        # Information Disclosure -> Mitigated by Traffic Encryption at the Interface
+        if "hasTransitEnc" not in result:
+            results.add((
+                STRIDE.INFORMATION_DISCLOSURE, 
+                frozenset([(actor_uri, system_uri, interface_uri, CONTROL.DATA_IN_TRANSIT_ENCRYPTION)])
+            ))
+
     return results
 
 # Internal systems exposing external systems present these threats:
 #   - Spoofing of the External Service, mitigated by Server Authentication by the Internal Service
 #   - Information disclosure, mitigated by Traffic Encryption by the External Services' Interface
 def InternalSystemExternalSystem() -> Set[Tuple[STRIDE, FrozenSet[Tuple[str, str, str, CONTROL]]]]:
+    # We select the systems and OPTIONALLY check if the specific mitigations exist
     query: str = """
         PREFIX : <http://thefirm.com/graphix#>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-        SELECT ?internalSystem ?externalSystem
+        SELECT ?internalSystem ?externalSystem ?hasAuth ?hasEncryption
         WHERE {
             ?internalSystem a :L1_InternalSystem .
             ?interface a :L1_Interface .
             ?externalSystem a :L1_ExternalSystem .
+
             ?internalSystem :L1_invokesInterface ?interface .
             ?externalSystem :L1_exposesInterface ?interface .
+
+            # Bind a variable if the mitigation exists, otherwise it remains unbound
+            OPTIONAL { 
+                ?internalSystem :CTL_RequiredControls :CTL_ServerAuthentication . 
+                BIND(true AS ?hasAuth)
+            }
+            OPTIONAL { 
+                ?internalSystem :CTL_RequiredControls :CTL_DataInTransitEncryption . 
+                BIND(true AS ?hasEncryption)
+            }
         }"""
+        
     bindings = GetBindings(query)
     results: Set[Tuple[STRIDE, FrozenSet[Tuple[str, str, str, CONTROL]]]] = set()
 
     for result in bindings:
-        internal_system_uri_binding = result.get("internalSystem")
-        external_system_uri_binding = result.get("externalSystem")
+        internal_system_uri = result.get("internalSystem", {}).get("value", "")
+        external_system_uri = result.get("externalSystem", {}).get("value", "")
 
-        internal_system_uri = internal_system_uri_binding["value"] if internal_system_uri_binding else ""
-        external_system_uri = external_system_uri_binding["value"] if external_system_uri_binding else ""
+        # If the variable isn't bound in SPARQL, it means the mitigation is missing
+        is_spoofing_mitigated = "hasAuth" in result
+        is_information_disclosure_mitigated = "hasEncryption" in result
 
-        results.add((STRIDE.SPOOFING, frozenset([(external_system_uri, internal_system_uri, internal_system_uri, CONTROL.SERVER_AUTHENTICATION)])))
-        results.add((STRIDE.INFORMATION_DISCLOSURE, frozenset([(external_system_uri, internal_system_uri, internal_system_uri, CONTROL.DATA_IN_TRANSIT_ENCRYPTION)])))
+        # Only add the threat if it hasn't been mitigated yet
+        if not is_spoofing_mitigated:
+            results.add((
+                STRIDE.SPOOFING, 
+                frozenset([(external_system_uri, internal_system_uri, internal_system_uri, CONTROL.SERVER_AUTHENTICATION)])
+            ))
+            
+        if not is_information_disclosure_mitigated:
+            results.add((
+                STRIDE.INFORMATION_DISCLOSURE, 
+                frozenset([(external_system_uri, internal_system_uri, internal_system_uri, CONTROL.DATA_IN_TRANSIT_ENCRYPTION)])
+            ))
 
     return results
 
 def RenderResults(results: Set[Tuple[STRIDE, FrozenSet[Tuple[str, str, str, CONTROL]]]]) -> None:
+    if not results:
+        print("✅ All identifiable threats have mitigations")
     for result in results:
         print(f"⚠️  Threat: {result[0].value}")
         for entry in result[1]:

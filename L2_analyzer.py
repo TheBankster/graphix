@@ -230,6 +230,6 @@ def L2_SemanticAnalyzer() -> bool:
             print(f"  - {interface}")
 
     if result:
-        print("🎈 L2 Semantic Check succeeded")
+        print("✅ L2 Semantic Check succeeded")
 
     return result
