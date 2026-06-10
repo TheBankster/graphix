@@ -32,33 +32,33 @@ def ContainersMissingTrustBoundary() -> Set[Tuple[str,str]]:
         
     return results
 
-# All exposed API must be invoked by at least one Container
-def MissingAPIInvocations() -> Set[Tuple[str,str]]:
+# All exposed L2 Interfaces must be invoked by at least one Container
+def MissingInterfaceInvocations() -> Set[Tuple[str,str]]:
     query: str = """
         PREFIX : <http://thefirm.com/graphix#>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-        SELECT ?API ?label
+        SELECT ?l2_interface ?label
         WHERE {
-            ?API a :L2_API .
-            FILTER NOT EXISTS { ?caller :L2_invokesAPI ?API . }
-            OPTIONAL { ?API rdfs:label ?label . }
+            ?l2_interface a :L2_Interface .
+            FILTER NOT EXISTS { ?caller :L2_invokesInterface ?l2_interface . }
+            OPTIONAL { ?l2_interface rdfs:label ?label . }
         }"""
     bindings = GetBindings(query)
     results: Set[Tuple[str,str]] = set()
    
     for result in bindings:
-        API_binding = result.get("API")
-        API_uri = API_binding["value"] if API_binding else ""
+        interface_binding = result.get("l2_interface")
+        interface_uri = interface_binding["value"] if interface_binding else ""
         
         label_binding = result.get("label")
         label = label_binding["value"] if label_binding else ""        
 
-        results.add((API_uri, label))
+        results.add((interface_uri, label))
 
     return results
 
-# All Containers must be inside a Trust Boundary
+# All Trust Boundaries must correspond to an Internal System Perimeter
 def UnlinkedTrustBoundaries() -> Set[Tuple[str,str]]:
     query: str = """
         PREFIX : <http://thefirm.com/graphix#>
@@ -67,7 +67,8 @@ def UnlinkedTrustBoundaries() -> Set[Tuple[str,str]]:
         SELECT ?trustBoundary ?label
         WHERE {
             ?trustBoundary a :L2_TrustBoundary .
-            FILTER NOT EXISTS { ?trustBoundary :L2_trustBoundary_to_L1 ?interface . }
+            ?internalSystemPerimeter a :L1_InternalSystemPerimeter .
+            FILTER NOT EXISTS { ?trustBoundary :L2_trustBoundary_to_L1 ?L1_InternalSystemPerimeter . }
             OPTIONAL { ?trustBoundary rdfs:label ?label . }
         }"""
     bindings = GetBindings(query)
@@ -93,7 +94,8 @@ def UnlinkedContainers() -> Set[Tuple[str,str]]:
         SELECT ?container ?label
         WHERE {
             ?container a :L2_Container .
-            FILTER NOT EXISTS { ?container :L2_container_to_L1 ?interalSystem . }
+            ?internalSystem a :L1_InternalSystem .
+            FILTER NOT EXISTS { ?container :L2_container_to_L1 ?internalSystem . }
             OPTIONAL { ?container rdfs:label ?label . }
         }"""
     bindings = GetBindings(query)
@@ -110,64 +112,67 @@ def UnlinkedContainers() -> Set[Tuple[str,str]]:
         
     return results
 
-# All API must be linked to an Interface
-def UnlinkedAPI() -> Set[Tuple[str,str]]:
+# All L2 interfaces must link to an L1 interface unless exposed and called within the same L1 Software System
+def UnlinkedInterfaces() -> Set[Tuple[str,str]]:
     query: str = """
         PREFIX : <http://thefirm.com/graphix#>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-        SELECT ?API ?label
+        SELECT ?l2_interface ?label
         WHERE {
-            ?API a :L2_API .
-            # Condition 1: The API must be missing its L1 Interface mapping
-            FILTER NOT EXISTS { ?API :L2_API_to_L1 ?interface . }
+            ?l2_interface a :L2_Interface .
+            # Condition 1: The L2 Interface must be missing its L1 Interface mapping
+            FILTER NOT EXISTS {
+                ?l1_interface a :L1_Interface .
+                ?l2_interface :L2_Interface_to_L1 ?l1_interface . }
             # Condition 2: EXCLUDE if it's an internal call within the same L1 Software System
             FILTER NOT EXISTS {
-                ?Caller a :L2_Container .
-                ?Callee a :L2_Container .
-                ?InternalSystem a :L1_InternalSystem .
+                ?caller a :L2_Container .
+                ?callee a :L2_Container .
+                ?internalSystem a :L1_InternalSystem .
                 
-                ?Caller :L2_invokesAPI ?API .
-                ?Callee :L2_exposesAPI ?API .
+                ?caller :L2_invokesInterface ?l2_interface .
+                ?callee :L2_exposesInterface ?l2_interface .
                 
                 # Both containers map back to the same L1 System
-                ?Caller :L2_container_to_L1 ?InternalSystem .
-                ?Callee :L2_container_to_L1 ?InternalSystem .
+                ?caller :L2_container_to_L1 ?internalSystem .
+                ?callee :L2_container_to_L1 ?internalSystem .
             }
-            OPTIONAL { ?API rdfs:label ?label . }
+            OPTIONAL { ?l2_interface rdfs:label ?label . }
         }"""
     bindings = GetBindings(query)
     results: Set[Tuple[str,str]] = set()
 
     for result in bindings:
-        API_binding = result.get("API")
-        API_uri = API_binding["value"] if API_binding else ""
+        interface_binding = result.get("l2_interface")
+        interface_uri = interface_binding["value"] if interface_binding else ""
         
         label_binding = result.get("label")
         label = label_binding["value"] if label_binding else ""        
 
-        results.add((API_uri, label))
+        results.add((interface_uri, label))
         
     return results
 
+# All L1 interfaces must have at least one L2 interface link to them
 def UnutilizedInterfaces() -> Set[Tuple[str,str]]:
     query: str = """
         PREFIX : <http://thefirm.com/graphix#>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-        SELECT ?interface ?label
+        SELECT ?l1_interface ?label
         WHERE {
-            ?interface a :L1_Interface .
+            ?l1_interface a :L1_Interface .
             FILTER NOT EXISTS { 
-                    ?API a :L2_API .
-                    ?API :L2_API_to_L1 ?interface . }
-            OPTIONAL { ?interface rdfs:label ?label . }
+                    ?l2_interface a :L2_Interface .
+                    ?l2_interface :L2_Interface_to_L1 ?l1_interface . }
+            OPTIONAL { ?l1_interface rdfs:label ?label . }
         }"""
     bindings = GetBindings(query)
     results: Set[Tuple[str,str]] = set()
 
     for result in bindings:
-        interface_binding = result.get("interface")
+        interface_binding = result.get("l1_interface")
         interface_uri = interface_binding["value"] if interface_binding else ""
         
         label_binding = result.get("label")
@@ -180,10 +185,10 @@ def UnutilizedInterfaces() -> Set[Tuple[str,str]]:
 def L2_SemanticAnalyzer() -> bool:
     result: bool = True
     containersMissingTrustBoundary = ContainersMissingTrustBoundary()
-    missingAPIInvocations = MissingAPIInvocations()
+    missingInterfaceInvocations = MissingInterfaceInvocations()
     unlinkedTrustBoundaries = UnlinkedTrustBoundaries()
     unlinkedContainers = UnlinkedContainers()
-    unlinkedAPI = UnlinkedAPI()
+    unlinkedInterfaces = UnlinkedInterfaces()
     unutilizedInterfaces = UnutilizedInterfaces()
 
     print("📐 Running L2 Semantic Analyzer...")
@@ -194,11 +199,11 @@ def L2_SemanticAnalyzer() -> bool:
         for container in containersMissingTrustBoundary:
             print(f"  - {container}")
 
-    if missingAPIInvocations:
+    if missingInterfaceInvocations:
         result = False
-        print("🛑 The following API are not invoked by any Container:")
-        for API in missingAPIInvocations:
-            print(f"  - {API}")
+        print("🛑 The following Interface are not invoked by any Container:")
+        for interface in missingInterfaceInvocations:
+            print(f"  - {interface}")
 
     if unlinkedTrustBoundaries:
         result = False
@@ -212,15 +217,15 @@ def L2_SemanticAnalyzer() -> bool:
         for container in unlinkedContainers:
             print(f"  - {container}")
 
-    if unlinkedAPI:
+    if unlinkedInterfaces:
         result = False
-        print("🛑 The following API are not linked to an Interface:")
-        for API in unlinkedAPI:
-            print(f"  - {API}")
+        print("🛑 The following L2 Interfaces are not linked to an L1 Interface:")
+        for interface in unlinkedInterfaces:
+            print(f"  - {interface}")
 
     if unutilizedInterfaces:
         result = False
-        print("🛑 The following Interfaces are not linked to by any API:")
+        print("🛑 The following L1 Interfaces are not linked to by any L2 Interface:")
         for interface in unutilizedInterfaces:
             print(f"  - {interface}")
 

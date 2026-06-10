@@ -65,9 +65,9 @@
 :L2_DataStore a owl:Class ;
     rdfs:subClassOf :L2_Container .
 
-:L2_API a owl:Class ;
+:L2_Interface a owl:Class ;
     rdfs:subClassOf :L2_Element ;
-    rdfs:comment "Defines an API to a Container." .
+    rdfs:comment "Defines an Interface to a Container." .
 
 :L2_TrustBoundary a owl:Class ;
     rdfs:subClassOf :L2_Element ;
@@ -101,15 +101,15 @@
     rdfs:range :L2_TrustBoundary ;
     rdfs:comment "Indicates that a container is within a specific zone." .
 
-:L2_invokesAPI a owl:ObjectProperty ;
+:L2_invokesInterface a owl:ObjectProperty ;
     rdfs:domain :L2_Container ;
-    rdfs:range :L2_API ;
-    rdfs:comment "Containers invoking API." .
+    rdfs:range :L2_Interface ;
+    rdfs:comment "Container invoking an interface." .
 
-:L2_exposesAPI a owl:ObjectProperty ;
+:L2_exposesInterface a owl:ObjectProperty ;
     rdfs:domain :L2_Container ;
-    rdfs:range :L2_API ;
-    rdfs:comment "Defines an API exposed by a container." .
+    rdfs:range :L2_Interface ;
+    rdfs:comment "Defines an interface exposed by a container." .
 
 ### Cross-Level Relationships
 
@@ -123,8 +123,8 @@
     rdfs:range :L1_InternalSystem ;
     rdfs:comment "Maps a specific L2 Container to its parent L1 Internal Software System." .
 
-:L2_API_to_L1 a owl:ObjectProperty ;
-    rdfs:domain :L2_API ;
+:L2_Interface_to_L1 a owl:ObjectProperty ;
+    rdfs:domain :L2_Interface ;
     rdfs:range :L1_Interface ;
     rdfs:comment "Maps an L2 API to the L1 Interface it implements." .
 
