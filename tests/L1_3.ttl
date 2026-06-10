@@ -1,0 +1,11 @@
+@prefix : <http://thefirm.com/graphix#> .
+
+#################################################################
+#    L1 E-Commerce Platform Example Threat Mitigations
+#################################################################
+:L1_ECommerceInterface :CTL_RequiredControls :CTL_ClientAuthentication .
+:L1_ECommerceInterface :CTL_RequiredControls :CTL_DataInTransitEncryption .
+:L1_ECommerceInterface :CTL_RequiredControls :CTL_RateLimiting .
+:L1_ECommercePlatform :CTL_RequiredControls :CTL_DataInTransitEncryption .
+:L1_ECommercePlatform :CTL_RequiredControls :CTL_ServerAuthentication .
+:L1_ECommercePlatform :CTL_RequiredControls :CTL_AccessControl .
