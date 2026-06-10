@@ -1,5 +1,6 @@
 @prefix : <http://thefirm.com/graphix#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 <http://thefirm.com/graphix> a owl:Ontology ;
@@ -11,7 +12,37 @@
 
 ### Base Architecture Elements ###
 
-:Graphix_Element a owl:Class .
+# Graphix employs controls to mitigate identified threats. This is an extensible list.
+# This set matches CONTROL enum in controls.py
+:CTL_ClientAuthentication a owl:NamedIndiviual .
+:CTL_ServerAuthentication a owl:NamedIndiviual .
+:CTL_DataInTransitEncryption a owl:NamedIndiviual .
+:CTL_DataAtRestEncryption a owl:NamedIndiviual .
+:CTL_RateLimiting a owl:NamedIndiviual .
+:CTL_AccessControl a owl:NamedIndiviual .
+
+:CTL_MitigationSet a owl:Class ;
+    owl:OneOf (
+        :CTL_ClientAuthentication
+        :CTL_ServerAuthentication
+        :CTL_DataInTransitEncryption
+        :CTL_DataAtRestEncryption
+        :CTL_RateLimiting
+        :CTL_AccessControl
+        ) ;
+    rdfs:comment "A set of controls that mitigate threats." .
+
+:CTL_MitigatedBy a owl:ObjectProperty ;
+    rdfs:domain :Graphix_Element ;
+    rdfs:range :CTL_MitigationSet ;
+    rdfs:comment "Associates an architecture element with the controls that mitigate its threats." .
+
+:Graphix_Element a owl:Class ;
+    rdfs:subClassOf [  # NOTE: _not_ using :someValuesFrom here to enforce that all mitigations must be from the defined set.
+        a owl:Restriction ;
+        owl:onProperty :CTL_MitigatedBy ;
+        owl:allValuesFrom :CTL_MitigationSet
+    ].
 
 :Graphix_TrustBoundary a owl:Class ;
     rdfs:subClassOf :Graphix_Element ;
@@ -70,7 +101,7 @@
     rdfs:comment "Defines an Interface to a Container." .
 
 :L2_TrustBoundary a owl:Class ;
-    rdfs:subClassOf :L2_Element ;
+    rdfs:subClassOf :Graphix_TrustBoundary ;
     rdfs:comment "Defines the boundary around a set of related containers." .
 
 #################################################################

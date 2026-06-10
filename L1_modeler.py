@@ -46,7 +46,7 @@ def ExternalActorInternalSystem() -> Set[Tuple[STRIDE, FrozenSet[Tuple[str, str,
         results.add((STRIDE.SPOOFING, frozenset([(actor_uri, system_uri, interface_uri, CONTROL.CLIENT_AUTHENTICATION)])))
         results.add((STRIDE.DENIAL_OF_SERVICE, frozenset([(actor_uri, system_uri, interface_uri, CONTROL.RATE_LIMITING)])))
         results.add((STRIDE.ELEVATION_OF_PRIVILEGE, frozenset([(actor_uri, system_uri, system_uri, CONTROL.ACCESS_CONTROL)])))
-        results.add((STRIDE.INFORMATION_DISCLOSURE, frozenset([(actor_uri, system_uri, interface_uri, CONTROL.TRAFFIC_ENCRYPTION)])))
+        results.add((STRIDE.INFORMATION_DISCLOSURE, frozenset([(actor_uri, system_uri, interface_uri, CONTROL.DATA_IN_TRANSIT_ENCRYPTION)])))
     return results
 
 # Internal systems exposing external systems present these threats:
@@ -76,7 +76,7 @@ def InternalSystemExternalSystem() -> Set[Tuple[STRIDE, FrozenSet[Tuple[str, str
         external_system_uri = external_system_uri_binding["value"] if external_system_uri_binding else ""
 
         results.add((STRIDE.SPOOFING, frozenset([(external_system_uri, internal_system_uri, internal_system_uri, CONTROL.SERVER_AUTHENTICATION)])))
-        results.add((STRIDE.INFORMATION_DISCLOSURE, frozenset([(external_system_uri, internal_system_uri, internal_system_uri, CONTROL.TRAFFIC_ENCRYPTION)])))
+        results.add((STRIDE.INFORMATION_DISCLOSURE, frozenset([(external_system_uri, internal_system_uri, internal_system_uri, CONTROL.DATA_IN_TRANSIT_ENCRYPTION)])))
 
     return results
 

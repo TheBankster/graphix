@@ -5,4 +5,5 @@ class CONTROL(Enum):
     SERVER_AUTHENTICATION = "Server Authentication"
     ACCESS_CONTROL = "Access Control"
     RATE_LIMITING = "Rate Limiting"
-    TRAFFIC_ENCRYPTION = "Traffic Encryption"
+    DATA_IN_TRANSIT_ENCRYPTION = "Data-in-transit Encryption"
+    DATA_AT_REST_ENCRYPTION = "Data-at-rest Encryption"
