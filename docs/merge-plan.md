@@ -11,7 +11,7 @@ own the ontology, so those need their sign-off (the rest is our threat-modeling 
 
 ## STATUS: P0–P1 DONE (2026-06-09)
 
-Merged on local branch **`merge-coworker`** (commit `711a08e`, merge of our WIP
+Merged on local branch **`vitaly-changes`** (commit `711a08e`, merge of our WIP
 `7fafc75` + his `3f58bd6`). Not pushed (no write access to his repo yet).
 
 **Done:** control vocab unified on **our `:Control` model** (his `:CTL_*`/`:CTL_ControlSet`
@@ -33,7 +33,23 @@ DoS/Spoofing to ✅ when `L1_3` loads).
   Open/Potential/Mitigated grade (incl. IaC-confirmed), not hand-asserted binaries.
 - **P3:** then push/PR (needs repo access — fork+PR or he adds the collaborator).
 
-## Round 2 — forward plan (his `3f58bd6..694b3b6`, NOT yet merged)
+## Round 2 — DONE (merged `526152e`, converged on Path A)
+
+His 4 commits (**portable rdflib backend**, **implemented L2 threat modeler**, reified
+**`:CTL_ControlSatisfaction`**) are merged on `vitaly-changes` and converted to our
+`:Control` vocabulary (Path A — see [vocab-decision.md](vocab-decision.md)). Done:
+- rdflib backend integrated — added `RunUpdate` + delegated it; switched inference to
+  `OWLRL_Semantics` (so `owl:hasValue` fires). **`runall.sh` validated on both backends.**
+- His L2 threat modeler + `modeler.py` kept; `:CTL_*` / `URI_TO_CONTROL` / labels → our vocab.
+- `:CTL_ControlSatisfaction` → our `:ControlSatisfaction`.
+- `EvaluateSatisfaction` level-scoped to `:L2_Element` (the Round-1 P2 fix).
+
+**Still open:** the **ControlSatisfaction bridge** (his hand-asserted satisfaction vs our
+derived/graded one — unify into one); inbound/outbound threat-semantics review; then
+push/PR once repo access exists. The original forward plan that produced this is kept
+below for reference.
+
+### Original Round-2 forward plan (for reference)
 
 His next 4 commits add a **portable rdflib backend**, an **implemented L2 threat
 modeler**, and a **reified `:CTL_ControlSatisfaction`** model. Full breakdown in
@@ -80,7 +96,7 @@ the conversion **twice**, and it grows every round.
 
 ### Git mechanics (when we execute)
 
-`git merge origin/master` into `merge-coworker`. Expected touch-points: `graphdb.py`
+`git merge origin/master` into `vitaly-changes`. Expected touch-points: `graphdb.py`
 (our `RunUpdate` + his delegate pattern → combine, add `RunUpdate` delegation),
 `schema.ttl` (his `:CTL_ControlSatisfaction` → our vocab), `main.py` (his `-t` = L1+L2
 threat vs our flag set), `L1_modeler.py`/`L1_3.ttl` (he re-touched in `:CTL_*`; we'd
@@ -117,7 +133,7 @@ Our work is uncommitted (incl. untracked files); the `L2_modeler.py` name clash 
 raw `git merge` would refuse to overwrite. So:
 
 1. Branch off our base and commit our WIP **locally** (not pushed):
-   `git switch -c merge-coworker` (from current HEAD `3f83f93`), then
+   `git switch -c vitaly-changes` (from current HEAD `3f83f93`), then
    `git add -A && git commit` our full working tree.
    - This is the first step that needs a "go" — it's a local branch only, addressing the
      earlier "don't commit yet" (nothing leaves the machine).

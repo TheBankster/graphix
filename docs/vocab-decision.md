@@ -5,7 +5,7 @@
 converge to one. This doc states *why*, lays out the *two paths*, and points at running
 code so we can compare **code and vocabulary together**, not in the abstract.
 
-The `merge-coworker` branch currently implements **Path A** end-to-end (both backends,
+The `vitaly-changes` branch currently implements **Path A** end-to-end (both backends,
 full `runall.sh` green) — so Path A is reviewable as working code today; Path B is
 described here as the alternative.
 
@@ -46,7 +46,7 @@ requirement/provision via `:requiresControl` / `:capableOfControl` / `:providesC
 - **Gain:** keeps the capability tier (`capableOfControl` → POTENTIAL), control scope,
   policy-derived requirements, and the L3 IaC-evidence bridge — all of which the
   `:CTL_ControlSet` enumeration can't express without being rebuilt.
-- **Status:** ✅ implemented and validated on `merge-coworker` (GraphDB **and** rdflib
+- **Status:** ✅ implemented and validated on `vitaly-changes` (GraphDB **and** rdflib
   backends); his threat modelers run unchanged in behavior on the converted vocab.
 
 ### Path B — converge on the `:CTL_*` model

@@ -9,8 +9,10 @@ Snapshot date: 2026-06-09. Common base: `3f83f93` ("Add script to run all tests 
 Everything below is from read-only diffs; nothing was stashed, merged, or committed.
 
 > **Round 1** (this section + file-by-file below) was reconciled on branch
-> `merge-coworker` (commit `711a08e`). **Round 2** (his next 4 commits,
-> `3f58bd6..694b3b6`) is documented immediately below and is **not yet merged**.
+> `vitaly-changes` (commit `711a08e`). **Round 2** (his next 4 commits,
+> `3f58bd6..694b3b6`) is documented immediately below and is **merged** on the same
+> branch (commit `526152e`), converged onto our `:Control` vocab (Path A — see
+> [vocab-decision.md](vocab-decision.md)).
 
 ---
 
