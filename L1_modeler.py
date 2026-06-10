@@ -1,7 +1,8 @@
+from collections import defaultdict
 from graphdb import GetBindings
 from stride import STRIDE
 from controls import CONTROL
-from typing import Set, Tuple, FrozenSet
+from typing import Set, Tuple, FrozenSet, Iterable
 
 ### L1 Threat Modeling Rules ###
 
@@ -137,24 +138,47 @@ def InternalSystemExternalSystem() -> Set[Tuple[STRIDE, FrozenSet[Tuple[str, str
 
     return results
 
-def RenderResults(results: Set[Tuple[STRIDE, FrozenSet[Tuple[str, str, str, CONTROL, bool]]]]) -> None:
-    for result in results:
-        mitigated: bool = True
-        for entry in result[1]:
-            if not entry[4]:
-                mitigated = False
-                break
-        icon: str = "✅" if mitigated else "⚠️ "
-        print(f"{icon} Threat: {result[0].value}")
-        for entry in result[1]:
-            print(f"    Attacker node: {entry[0]}")
-            print(f"    Vulnerable node: {entry[1]}")
+def RenderResults(results: Iterable[Tuple[STRIDE, FrozenSet[Tuple[str, str, str, CONTROL, bool]]]]) -> None:
+    # 1. Bucket the inner entries by their STRIDE threat type
+    grouped_threats = defaultdict(list)
+    for stride_type, entries_set in results:
+        for entry in entries_set:
+            grouped_threats[stride_type].append(entry)
+            
+    # 2. Iterate through the grouped categories in alphabetical order of the threat name
+    for stride_type in sorted(grouped_threats.keys(), key=lambda x: x.value):
+        entries = grouped_threats[stride_type]
+        
+        # Determine if the ENTIRE category is mitigated (True if ALL entries are true)
+        all_mitigated = all(entry[4] for entry in entries)
+        category_icon = "✅" if all_mitigated else "⚠️ "
+        
+        # Print the overarching threat category header ONCE
+        print(f"\n{category_icon} Threat Category: {stride_type.value}")
+        
+        # Print each individual target link under this header
+        for entry in entries:
+            # Check the status of this specific link
+            item_icon = "✅" if entry[4] else "⚠️ "
+            
+            print(f"    ---------------------------------------------")
+            print(f"    Attacker node:     {entry[0]}")
+            print(f"    Vulnerable node:   {entry[1]}")
             print(f"    Mitigating entity: {entry[2]}")
-            print(f"    Mitigating control: {entry[3].value} {icon}")
+            print(f"    Mitigating control: {entry[3].value} {item_icon}")
 
 def L1_ThreatModeler() -> Set[Tuple[STRIDE, FrozenSet[Tuple[str, str, str, CONTROL, bool]]]]:
     results: Set[Tuple[STRIDE, FrozenSet[Tuple[str, str, str, CONTROL, bool]]]] = set()
+    
+    # Accumulate all threats from different architectural bounds
     results.update(ExternalActorInternalSystem())
     results.update(InternalSystemExternalSystem())
-    RenderResults(results)
+    
+    # Sort the results by the first element of the tuple (STRIDE enum value)
+    # This groups all SPOOFING together, all DENIAL_OF_SERVICE together, etc.
+    grouped_results = sorted(results, key=lambda x: x[0].value)
+    
+    # Pass the ordered list to the renderer so they print out cleanly grouped
+    RenderResults(grouped_results)
+    
     return results
