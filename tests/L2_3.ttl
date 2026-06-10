@@ -1,0 +1,32 @@
+@prefix : <http://thefirm.com/graphix#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+#################################################################
+#    L2 E-Commerce Platform Example Threat Mitigations
+#    (coworker's reified ControlSatisfaction demo, converted to our vocab)
+#################################################################
+
+# A WAF in front of the web tier, with its general control capability.
+:L2_WebFrontEndWAF a :L2_Container ;
+    rdfs:label "Web Front-End WAF" .
+:L2_WebFrontEndWAF :providesControl
+    :ClientAuthentication ,
+    :TrafficEncryption ,
+    :RateLimiting .
+
+# The WAF satisfies multiple requirements for the ECommerce Platform Interface.
+:L2_WAF_Controls a :ControlSatisfaction ;
+    :isSatisfiedBy :L2_WebFrontEndWAF ;
+    :satisfiesRequirementOf :L1_ECommerceInterface ;
+    :satisfiedControl
+        :ClientAuthentication ,
+        :TrafficEncryption ,
+        :RateLimiting .
+
+# The Processing Engine (Container) satisfies the outbound requirements
+# for the Platform when it acts as a client to external services.
+:L2_Platform_Outbound_Controls a :ControlSatisfaction ;
+    :isSatisfiedBy :L2_ProcessingEngine ;
+    :satisfiesRequirementOf :L1_ECommercePlatform ;
+    :satisfiedControl :TrafficEncryption ,
+                      :ServerAuthentication .

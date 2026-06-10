@@ -6,6 +6,7 @@ from graphdb import StartGraphClients, GraphDBLabel, UploadTtl, ClearRepository
 from L1_analyzer import L1_SemanticAnalyzer
 from L2_analyzer import L2_SemanticAnalyzer
 from L1_modeler import L1_ThreatModeler
+from L2_modeler import L2_ThreatModeler
 from L2_control_modeler import L2_ControlModeler
 from L3_extractor import ExtractIaC
 from L3_analyzer import L3_Reconciler
@@ -100,6 +101,7 @@ def main(args):
         L2_SemanticAnalyzer()
     elif parsed_args.func == "ThreatModel":
         L1_ThreatModeler()
+        L2_ThreatModeler()
     elif parsed_args.func == "ControlModel":
         L2_ControlModeler()
     elif parsed_args.func == "Reconcile":

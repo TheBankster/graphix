@@ -66,6 +66,9 @@ def EvaluateSatisfaction() -> List[Tuple[str, str, str, str, str]]:
     query: str = PREFIX + """
         SELECT ?element ?elementLabel ?control ?scope ?state
         WHERE {
+            # Scope to L2: obligations on L1 elements (e.g. hand-asserted in L1_3.ttl and
+            # consumed by the L1/L2 threat modelers) are graded there, not in this L2 report.
+            ?element a :L2_Element .
             ?element :requiresControl ?ctrl .
             ?ctrl rdfs:label ?control .
             OPTIONAL { ?element rdfs:label ?elementLabel . }

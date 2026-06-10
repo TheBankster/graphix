@@ -1,5 +1,6 @@
 import os
 import requests
+import graphixconfig
 from graphixconfig import GraphDBHost, GraphDBPort, GraphDBRepoId
 from tracing import trace
 from enum import Enum
@@ -8,16 +9,17 @@ from typing import Any, cast, Dict, Optional
 
 _GraphQueryClient: Optional[SPARQLWrapper] = None
 _GraphUpdateClient: Optional[SPARQLWrapper] = None
+_delegate = None  # set by StartGraphClients when backend != "graphdb"
 
 class GraphDBLabel(Enum):
     SCHEMA = "Schema"
     DATA = "Data"
 
-def GraphDBUriPrefix(host:str = GraphDBHost, port:int = GraphDBPort) -> str:
-    return f"http://{host}:{port}"
+def GraphDBUriPrefix(host:str = None, port:int = None) -> str:
+    return f"http://{host or graphixconfig.GraphDBHost}:{port or graphixconfig.GraphDBPort}"
 
-def GraphDBUri(host:str = GraphDBHost, port:int = GraphDBPort, repoid:str = GraphDBRepoId):
-    return GraphDBUriPrefix(host, port) + f"/repositories/{repoid}"
+def GraphDBUri(host:str = None, port:int = None, repoid:str = None):
+    return GraphDBUriPrefix(host, port) + f"/repositories/{repoid or graphixconfig.GraphDBRepoId}"
 
 # Checks if a repository exists using the GraphDB REST Management API.
 def CheckRepositoryExists(host: str, port: int, repoid: str) -> bool:
@@ -36,6 +38,7 @@ def CheckRepositoryExists(host: str, port: int, repoid: str) -> bool:
         return False
 # Generic function to upload TTL files to GraphDB.
 def UploadTtl(repo_id:str, file_path:str, label:GraphDBLabel):
+    if _delegate: return _delegate.UploadTtl(repo_id, file_path, label)
     if not os.path.exists(file_path):
         trace(f"🧨 Error: {label.value} file '{file_path}' not found.")
         exit(1)
@@ -60,6 +63,7 @@ def UploadTtl(repo_id:str, file_path:str, label:GraphDBLabel):
 
 # Clears all data from the specified GraphDB repository.
 def ClearRepository(repo_id:str):
+    if _delegate: return _delegate.ClearRepository(repo_id)
     url = GraphDBUriPrefix() + f"/repositories/{repo_id}/statements"
     try:
         # Sending DELETE request with an empty 'update' or no params 
@@ -74,8 +78,16 @@ def ClearRepository(repo_id:str):
         trace(f"🧨 An error occurred while clearing repository '{repo_id}': {e}")
         exit(1)
 
-def StartGraphClients(host:str=GraphDBHost, port:int=GraphDBPort, repoid:str=GraphDBRepoId) -> None:
-    global _GraphQueryClient, _GraphUpdateClient
+def StartGraphClients(host:str=None, port:int=None, repoid:str=None) -> None:
+    host = host or graphixconfig.GraphDBHost
+    port = port or graphixconfig.GraphDBPort
+    repoid = repoid or graphixconfig.GraphDBRepoId
+    global _GraphQueryClient, _GraphUpdateClient, _delegate
+    if graphixconfig.GraphDBBackend == "rdflib":
+        import rdflib_backend as _mod
+        _delegate = _mod
+        _mod.StartGraphClients(host, port, repoid)
+        return
     try:
         if not CheckRepositoryExists(host, port, repoid):
             raise ValueError(f"GraphDB repository '{repoid}' does not exist at {host}:{port}")
@@ -99,6 +111,7 @@ def GraphUpdateClient() -> SPARQLWrapper:
     return _GraphUpdateClient
 
 def GetBindings(query: str) -> Any:
+    if _delegate: return _delegate.GetBindings(query)
     client = GraphQueryClient()
     client.setQuery(query)
     client.setReturnFormat(JSON)
@@ -109,6 +122,7 @@ def GetBindings(query: str) -> Any:
 
 # Runs a SPARQL UPDATE (e.g. INSERT/DELETE) against the repository.
 def RunUpdate(update: str) -> None:
+    if _delegate: return _delegate.RunUpdate(update)
     client = GraphUpdateClient()
     client.setQuery(update)
     client.setMethod(POST)

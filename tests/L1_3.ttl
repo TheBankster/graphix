@@ -3,9 +3,12 @@
 #################################################################
 #    L1 E-Commerce Platform Example Threat Mitigations
 #################################################################
-:L1_ECommerceInterface :requiresControl :ClientAuthentication .
-:L1_ECommerceInterface :requiresControl :TrafficEncryption .
-:L1_ECommerceInterface :requiresControl :RateLimiting .
-:L1_ECommercePlatform :requiresControl :TrafficEncryption .
-:L1_ECommercePlatform :requiresControl :ServerAuthentication .
-:L1_ECommercePlatform :requiresControl :AccessControl .
+:L1_ECommerceInterface :requiresControl
+    :ClientAuthentication ,
+    :TrafficEncryption ,
+    :RateLimiting .
+
+:L1_ECommercePlatform :requiresControl
+    :TrafficEncryption ,
+    :ServerAuthentication ,
+    :AccessControl .

@@ -38,6 +38,31 @@
     rdfs:subClassOf :Graphix_Element ;
     rdfs:comment "Defines the boundary of trust between entities." .
 
+### Control Satisfaction (reified) ###
+
+# From the coworker's Round-2 design (originally :CTL_ControlSatisfaction), converted to
+# our vocabulary. A reified link asserting "element X satisfies a control requirement of
+# element Y". This parallels our computed :protects / :providesControl satisfaction; kept
+# here because his L1/L2 threat modelers consume it. (Bridging it to our derived/graded
+# satisfaction is a tracked next step -- see docs/merge-plan.md.)
+:ControlSatisfaction a owl:Class ;
+    rdfs:comment "An instance where one element satisfies a specific control requirement of another." .
+
+:satisfiesRequirementOf a owl:ObjectProperty ;
+    rdfs:domain :ControlSatisfaction ;
+    rdfs:range :Graphix_Element ;
+    rdfs:comment "The target element whose security requirement is being met." .
+
+:isSatisfiedBy a owl:ObjectProperty ;
+    rdfs:domain :ControlSatisfaction ;
+    rdfs:range :Graphix_Element ;
+    rdfs:comment "The source element providing the mitigation/control." .
+
+:satisfiedControl a owl:ObjectProperty ;
+    rdfs:domain :ControlSatisfaction ;
+    rdfs:range :Control ;
+    rdfs:comment "A specific control applied in this satisfaction instance. Multi-valued." .
+
 ### Level 1 (Context) Classes ###
 
 :L1_Element a owl:Class ;

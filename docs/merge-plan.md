@@ -9,6 +9,84 @@ own the ontology, so those need their sign-off (the rest is our threat-modeling 
 
 ---
 
+## STATUS: P0–P1 DONE (2026-06-09)
+
+Merged on local branch **`merge-coworker`** (commit `711a08e`, merge of our WIP
+`7fafc75` + his `3f58bd6`). Not pushed (no write access to his repo yet).
+
+**Done:** control vocab unified on **our `:Control` model** (his `:CTL_*`/`:CTL_ControlSet`
+dropped; his closed-set `allValuesFrom` guard re-expressed over our vocab); his
+`L1_modeler.py` + `L1_3.ttl` converted from `:CTL_*` to our control individuals; adopted
+his **`:L2_Interface`** rename and ported our control modeler + fixtures onto it; our
+`L2_modeler.py`→`L2_control_modeler.py` (his `L2_modeler.py` threat-modeler stub kept);
+`main.py` flags unified (`-1`/`-2` + `-m`/`-x`/`-r`); kept our control labels. **Validated:**
+`runall.sh` green — his grouped threat rendering + our L2 grading + L3 evidence/conformance
+all run on one schema; his threat modeler confirmed to read our `:requiresControl` (flips
+DoS/Spoofing to ✅ when `L1_3` loads).
+
+**Still open (P2/P3):**
+- **Cross-level scoping:** our `EvaluateSatisfaction` grades *every* `:requiresControl`
+  regardless of level, so loading `L1_3` (L1 obligations) before the L2 grading mixes L1
+  items into the L2 report. `runall.sh` deliberately doesn't load `L1_3` before the L2
+  steps. Fix = scope grading by level; then both `:requiresControl` consumers coexist.
+- **P2 synergy proper:** his threat modeler consumes our *derived* obligations + the
+  Open/Potential/Mitigated grade (incl. IaC-confirmed), not hand-asserted binaries.
+- **P3:** then push/PR (needs repo access — fork+PR or he adds the collaborator).
+
+## Round 2 — forward plan (his `3f58bd6..694b3b6`, NOT yet merged)
+
+His next 4 commits add a **portable rdflib backend**, an **implemented L2 threat
+modeler**, and a **reified `:CTL_ControlSatisfaction`** model. Full breakdown in
+[coworker-comparison.md](coworker-comparison.md) (Round 2 section). Plan:
+
+### Decision that now needs a real answer: the vocabulary (escalated)
+
+Round 1 converted his `:CTL_*` to our `:Control` model on the strength of his
+*conceptual* endorsement — but Round 2 shows his code still actively builds on `:CTL_*`
+(`modeler.py`, `L2_modeler.py`, `:CTL_ControlSatisfaction`, `L2_3.ttl`). We're now doing
+the conversion **twice**, and it grows every round.
+
+> **Recommendation: pause the merge and sync with the coworker to lock ONE vocabulary
+> before more divergence.** This is the "loop him in" call deferred in Round 1; Round 2
+> makes it the gating item. He endorsed `requires/capable/provides/protects` — the ask is
+> to actually adopt the `:Control` *naming* in his code (or, if he prefers `:CTL_*`,
+> decide that now and we adapt once). Either way, stop paying the conversion tax twice.
+
+### Mergeable now, low risk, high value (vocab-independent)
+
+- [ ] **Portable rdflib backend.** Genuinely useful for the demo (no GraphDB server).
+      Two fixes make it work with our stack:
+  1. Add **`RunUpdate`** to `rdflib_backend.py` (rdflib `graph.update(...)`) and delegate
+     it from `graphdb.py` (`if _delegate: return _delegate.RunUpdate(update)`); our
+     derivations + L3 `PropagateControlEvidence` need it.
+  2. Switch its inference from `RDFS_Semantics` to **`OWLRL_Semantics`** so `owl:hasValue`
+     fires (otherwise the archetype capable-tier is inert — the Step-3 issue, locally).
+  - Then validate `runall.sh` on **both** backends (`backend = graphdb` and `rdflib`).
+- [ ] **`modeler.py` shared `RenderThreats`** — adopt; our rendering already matches.
+
+### Bigger reconciliation (after vocab is locked)
+
+- [ ] **His L2 threat modeler + inbound/outbound role modeling** — fold in (convert its
+      `:CTL_*`/`URI_TO_CONTROL` refs to our vocab). The inbound-vs-outbound modeling is
+      threat-semantics worth reviewing on the threat-modeling side.
+- [ ] **ControlSatisfaction bridge.** His hand-asserted `:CTL_ControlSatisfaction`
+      answers the same question as our derived obligations + computed grading. Unify:
+      either our grading **emits** satisfaction instances, or his L2 threat modeler
+      **reads** our computed Mitigated/Open grade (and L3 IaC evidence) instead of
+      hand-asserted links. This is the real payoff — one satisfaction model feeding both
+      threat rendering and control grading.
+- [ ] Carry over the **Round-1 P2 level-scoping** fix (scope `EvaluateSatisfaction` by
+      level) — a prerequisite for the bridge, since both now read `:requiresControl`.
+
+### Git mechanics (when we execute)
+
+`git merge origin/master` into `merge-coworker`. Expected touch-points: `graphdb.py`
+(our `RunUpdate` + his delegate pattern → combine, add `RunUpdate` delegation),
+`schema.ttl` (his `:CTL_ControlSatisfaction` → our vocab), `main.py` (his `-t` = L1+L2
+threat vs our flag set), `L1_modeler.py`/`L1_3.ttl` (he re-touched in `:CTL_*`; we'd
+re-convert). **No `L2_modeler.py` filename clash this time** — his is the threat modeler,
+ours is `L2_control_modeler.py`.
+
 ## Guiding principle
 
 The two efforts are **complementary, not competing**: his is the *threat* side (enumerate

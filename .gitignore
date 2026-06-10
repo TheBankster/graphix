@@ -8,3 +8,6 @@ tests/L3_extracted.ttl
 terraform/.terraform/
 terraform/*.tfstate*
 terraform/zz_graphix_override.tf
+
+# rdflib portable backend's local store
+graphix_data.ttl

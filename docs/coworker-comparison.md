@@ -8,9 +8,73 @@ Snapshot date: 2026-06-09. Common base: `3f83f93` ("Add script to run all tests 
 
 Everything below is from read-only diffs; nothing was stashed, merged, or committed.
 
+> **Round 1** (this section + file-by-file below) was reconciled on branch
+> `merge-coworker` (commit `711a08e`). **Round 2** (his next 4 commits,
+> `3f58bd6..694b3b6`) is documented immediately below and is **not yet merged**.
+
 ---
 
-## TL;DR — the three headline divergences
+## Round 2 — new coworker work since the merge (`3f58bd6..694b3b6`)
+
+Fetched 2026-06-09 (later). 4 commits, incl. a merged PR from a **third contributor**
+(`joshpearce/portable-db`). Three themes:
+
+### 1. Portable rdflib backend (the headline) — `6ee003d` + PR `694b3b6`
+A storage-backend abstraction so GRAPHIX can run **without a GraphDB server**:
+- **`rdflib_backend.py`** (new) — same interface as `graphdb.py`
+  (`StartGraphClients`/`GetBindings`/`UploadTtl`/`ClearRepository`), backed by an
+  in-memory rdflib graph persisted to `graphix_data.ttl`, inferred with **`owlrl`**.
+- **`graphdb.py`** — a delegate pattern: if `backend == "rdflib"` it forwards all calls
+  to `rdflib_backend`; otherwise it's the normal GraphDB/SPARQLWrapper path.
+- **`graphixconfig.py` / `graphix.config`** — new `backend` setting (`graphdb` default
+  or `rdflib`). **`requirements.txt`** (new): requests, rdflib, owlrl, SPARQLWrapper.
+- **⚠️ Two gaps vs our code:**
+  - **No `RunUpdate`** (SPARQL `INSERT`). Our derivations (`DeriveChannelObligations`,
+    `DeriveNodeObligations`) and L3 `PropagateControlEvidence` all rely on it — they'd
+    fail on the rdflib backend until it grows an update path (rdflib supports
+    `graph.update(...)`).
+  - **Inference is `RDFS_Semantics`, not `OWLRL_Semantics`.** So on the rdflib backend
+    `owl:hasValue` does **not** fire — our archetype "capable" tier goes inert and
+    POTENTIAL collapses to OPEN (exactly the Step-3 issue, now on the local backend).
+    Needs bumping to `OWLRL_Semantics` for our model to work.
+
+### 2. L2 threat modeling implemented — `9f8dc74`, `cb773ab`
+His `L2_modeler.py` stub is now a real **L2 threat modeler** (`L2_ThreatModeler`):
+- **Cross-level satisfaction check:** `L2_Controls_L1_Requirements()` finds L2 elements
+  that satisfy L1 control requirements, tracing L1 paths to real attacker/vulnerable
+  nodes, and flags requirements with no satisfier.
+- **Inbound vs outbound roles** (the bug-fix commit): a system is modeled both as
+  *server* (someone invokes its interface) and as *client* (it invokes a remote
+  interface) — so outbound dependencies get threats too. (Threat-modeling semantics —
+  your domain; worth a close read.)
+- **`modeler.py`** (new, shared): `RenderThreats` (grouped ✅/⚠️ — moved out of
+  `L1_modeler.py`), plus `CONTROL_TO_STRIDE` and `URI_TO_CONTROL` maps.
+- **`main.py`** `-t` now runs **both** `L1_ThreatModeler` and `L2_ThreatModeler`.
+
+### 3. New schema concept: reified ControlSatisfaction — `9f8dc74`
+- **`:CTL_ControlSatisfaction`** + `:CTL_satisfiesRequirementOf` (target whose
+  requirement is met), `:CTL_isSatisfiedBy` (the providing element),
+  `:CTL_satisfiedControl` (which controls). A hand-asserted, **reified** link saying
+  "L2 element X satisfies L1 requirement Y for control Z" (see `tests/L2_3.ttl`: a WAF
+  satisfies the e-commerce interface; the processing engine satisfies the platform's
+  outbound controls).
+
+**Conceptual relationship to our work:** his `:CTL_ControlSatisfaction` answers the same
+question as our `:protects` + `:providesControl` + satisfaction grading — *"is this
+requirement met, and by what?"* — but **cross-level (L1↔L2)** and **hand-asserted**,
+where ours is **derived** (policy → obligations) and **computed/graded** (capable vs
+provides, plus L3 IaC evidence). Strong unify-or-bridge candidate.
+
+**Vocabulary note (important):** all of Round 2's new code/data uses the **`:CTL_*`
+vocabulary** (and `Data-in-transit`/`Data-at-rest` labels) — the exact thing Round 1's
+merge converted to our `:Control` model. So he's actively building on `:CTL_*` while we
+converged off it. The endorsement of "requires/capable/provides/protects" was of the
+*concept*; his code hasn't adopted our naming. **This widens, not narrows, the vocab gap
+— it's now the central reconciliation decision** (see merge-plan.md).
+
+---
+
+## TL;DR — the three headline divergences  *(Round 1)*
 
 1. **`:L2_API` → `:L2_Interface` rename (his).** He renamed the L2 endpoint concept
    from API to Interface across schema, analyzer, and all L2 fixtures. We kept `:L2_API`
