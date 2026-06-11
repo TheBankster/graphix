@@ -6,6 +6,7 @@ from graphdb import StartGraphClients, GraphDBLabel, UploadTtl, ClearRepository
 from L1_analyzer import L1_SemanticAnalyzer
 from L2_analyzer import L2_SemanticAnalyzer
 from L1_modeler import L1_ThreatModeler
+from L2_modeler import L2_ThreatModeler
 
 def main(args):
     LoadGraphixConfig('graphix.config')
@@ -69,6 +70,7 @@ def main(args):
         L2_SemanticAnalyzer()
     elif parsed_args.func == "ThreatModel":
         L1_ThreatModeler()
+        L2_ThreatModeler()
     else:
         parser.print_help()
     return

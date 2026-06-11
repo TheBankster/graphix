@@ -20,7 +20,7 @@
     rdfs:label "E-Commerce Platform Product Database" .
 
 # --- Interfaces ---
-:L2_WebFrontEndInterface a :L2_Interface ;
+:L2_WebFrontEndWAF a :L2_Interface ;
     rdfs:label "Web Front-End Interface" .
 
 :L2_ProcessingEngineInterface a :L2_Interface ;
@@ -65,7 +65,7 @@
 #:L2_ApplicationZone :L2_trustBoundary_to_L1 :L1_InternalSystemPerimeter .
 
 # --- Interface to L1 Links ---
-:L2_WebFrontEndInterface :L2_Interface_to_L1 :L1_ECommerceInterface .
+:L2_WebFrontEndWAF :L2_Interface_to_L1 :L1_ECommerceInterface .
 
 :L2_PaymentGatewayInterface :L2_Interface_to_L1 :L1_PaymentInterface .
 
@@ -73,9 +73,9 @@
 #:L2_NotificationServiceInterface :L2_Interface_to_L1 :L1_NotificationInterface .
 
 # --- Interface exposures and invocations ---
-:L2_Actor :L2_invokesInterface :L2_WebFrontEndInterface .
+:L2_Customer :L2_invokesInterface :L2_WebFrontEndWAF .
 
-:L2_WebFrontEnd :L2_exposesInterface :L2_WebFrontEndInterface .
+:L2_WebFrontEnd :L2_exposesInterface :L2_WebFrontEndWAF .
 
 :L2_ProcessingEngine :L2_exposesInterface :L2_ProcessingEngineInterface .
 

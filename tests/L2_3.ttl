@@ -1,0 +1,20 @@
+@prefix : <http://thefirm.com/graphix#> .
+
+#################################################################
+#    L2 E-Commerce Platform Example Threat Mitigations
+#################################################################
+
+# General capability of the WAF
+:L2_WebFrontEndWAF :CTL_ProvidesControls
+    :CTL_ClientAuthentication ,
+    :CTL_DataInTransitEncryption ,
+    :CTL_RateLimiting .
+
+# The WAF satisfies multiple requirements for the ECommerce Platform Interface
+:L2_WAF_Controls a :CTL_ControlSatisfaction ;
+    :CTL_isSatisfiedBy :L2_WebFrontEndWAF ;
+    :CTL_satisfiesRequirementOf :L1_ECommerceInterface ;
+    :CTL_satisfiedControl
+        :CTL_ClientAuthentication ,
+        :CTL_DataInTransitEncryption ,
+        :CTL_RateLimiting .

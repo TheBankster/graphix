@@ -3,9 +3,12 @@
 #################################################################
 #    L1 E-Commerce Platform Example Threat Mitigations
 #################################################################
-:L1_ECommerceInterface :CTL_RequiresControls :CTL_ClientAuthentication .
-:L1_ECommerceInterface :CTL_RequiresControls :CTL_DataInTransitEncryption .
-:L1_ECommerceInterface :CTL_RequiresControls :CTL_RateLimiting .
-:L1_ECommercePlatform :CTL_RequiresControls :CTL_DataInTransitEncryption .
-:L1_ECommercePlatform :CTL_RequiresControls :CTL_ServerAuthentication .
-:L1_ECommercePlatform :CTL_RequiresControls :CTL_AccessControl .
+:L1_ECommerceInterface :CTL_RequiresControls
+    :CTL_ClientAuthentication ,
+    :CTL_DataInTransitEncryption ,
+    :CTL_RateLimiting .
+
+:L1_ECommercePlatform :CTL_RequiresControls
+    :CTL_DataInTransitEncryption ,
+    :CTL_ServerAuthentication ,
+    :CTL_AccessControl .

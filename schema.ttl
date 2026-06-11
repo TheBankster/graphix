@@ -12,6 +12,24 @@
 
 ### Base Architecture Elements ###
 
+:Graphix_Element a owl:Class ;
+    rdfs:subClassOf [  # NOTE: _not_ using :someValuesFrom here to enforce that all mitigations must be from the defined set.
+        a owl:Restriction ;
+        owl:onProperty :CTL_RequiresControls ;
+        owl:allValuesFrom :CTL_ControlSet
+    ],
+    [
+        a owl:Restriction ;
+        owl:onProperty :CTL_ProvidesControls ;
+        owl:allValuesFrom :CTL_ControlSet
+    ].
+
+:Graphix_TrustBoundary a owl:Class ;
+    rdfs:subClassOf :Graphix_Element ;
+    rdfs:comment "Defines the boundary of trust between entities." .
+
+### Controls Architecture Elements ###
+
 # Graphix employs controls to mitigate identified threats. This is an extensible list.
 # This set matches CONTROL enum in controls.py
 :CTL_ClientAuthentication a owl:NamedIndividual .
@@ -42,21 +60,23 @@
     rdfs:range :CTL_ControlSet ;
     rdfs:comment "Associates an architecture element with the controls it provides to mitigate threats." .
 
-:Graphix_Element a owl:Class ;
-    rdfs:subClassOf [  # NOTE: _not_ using :someValuesFrom here to enforce that all mitigations must be from the defined set.
-        a owl:Restriction ;
-        owl:onProperty :CTL_RequiresControls ;
-        owl:allValuesFrom :CTL_ControlSet
-    ],
-    [
-        a owl:Restriction ;
-        owl:onProperty :CTL_ProvidesControls ;
-        owl:allValuesFrom :CTL_ControlSet
-    ].
+:CTL_ControlSatisfaction a owl:Class ;
+    rdfs:comment "Represents an instance where one Graphix_Element satisfies a specific control requirement for another element." .
 
-:Graphix_TrustBoundary a owl:Class ;
-    rdfs:subClassOf :Graphix_Element ;
-    rdfs:comment "Defines the boundary of trust between entities." .
+:CTL_satisfiesRequirementOf a owl:ObjectProperty ;
+    rdfs:domain :CTL_ControlSatisfaction ;
+    rdfs:range :Graphix_Element ;
+    rdfs:comment "The target element whose security requirement is being met." .
+
+:CTL_isSatisfiedBy a owl:ObjectProperty ;
+    rdfs:domain :CTL_ControlSatisfaction ;
+    rdfs:range :Graphix_Element ;
+    rdfs:comment "The source element providing the mitigation/control." .
+
+:CTL_satisfiedControl a owl:ObjectProperty ;
+    rdfs:domain :CTL_ControlSatisfaction ;
+    rdfs:range :CTL_ControlSet ;
+    rdfs:comment "The specific control(s) from the CTL_ControlSet being applied in this instance. This property is multi-valued." .
 
 ### Level 1 (Context) Classes ###
 
