@@ -6,14 +6,16 @@ import os
 DefaultGraphDBHost = "localhost"
 DefaultGraphDBPort = 7200
 DefaultGraphDBRepoId = "GRAPHIX"
+DefaultGraphDBBackend = "graphdb"
 
 # --- Global State ---
 GraphDBHost: str = DefaultGraphDBHost
 GraphDBPort: int = DefaultGraphDBPort
 GraphDBRepoId: str = DefaultGraphDBRepoId
+GraphDBBackend: str = DefaultGraphDBBackend
 
 def LoadGraphixConfig(configFile: str) -> None:
-    global GraphDBHost, GraphDBPort, GraphDBRepoId
+    global GraphDBHost, GraphDBPort, GraphDBRepoId, GraphDBBackend
     
     # Determine the directory containing this script
     program_dir = os.path.dirname(os.path.abspath(__file__))
@@ -32,6 +34,7 @@ def LoadGraphixConfig(configFile: str) -> None:
         GraphDBHost = graph_cfg.get('host', DefaultGraphDBHost)
         GraphDBPort = graph_cfg.get('port', DefaultGraphDBPort)
         GraphDBRepoId = graph_cfg.get('repoid', DefaultGraphDBRepoId)
+        GraphDBBackend = graph_cfg.get('backend', DefaultGraphDBBackend)
 
         # Settings section
         settings_cfg = config.get('settings', {})
