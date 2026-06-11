@@ -36,11 +36,22 @@ def L2_Controls_L1_Requirements() -> Set[Tuple[STRIDE, FrozenSet[Tuple[str, str,
             }
             UNION
             {
-                # Case 2: Requirement is on a Software System
+                # Case 2: Requirement is on a Software System (e.g. Platform)
                 ?l1_requirement_node a :L1_SoftwareSystem .
                 BIND(?l1_requirement_node AS ?vulnerable)
-                ?vulnerable :L1_exposesInterface ?iface .
-                ?attacker :L1_invokesInterface ?iface .
+                
+                {
+                    # Role: System as Server (Inbound)
+                    ?vulnerable :L1_exposesInterface ?iface .
+                    ?attacker :L1_invokesInterface ?iface .
+                }
+                UNION
+                {
+                    # Role: System as Client (Outbound)
+                    ?vulnerable :L1_invokesInterface ?remote_iface .
+                    ?remote_system :L1_exposesInterface ?remote_iface .
+                    BIND(?remote_system AS ?attacker)
+                }
             }
 
             OPTIONAL {
@@ -89,11 +100,9 @@ def L2_ThreatModeler() -> Set[Tuple[STRIDE, FrozenSet[Tuple[str, str, str, CONTR
     results.update(L2_Controls_L1_Requirements())
     
     # Sort the results by the first element of the tuple (STRIDE enum value)
-    # This groups all SPOOFING together, all DENIAL_OF_SERVICE together, etc.
     grouped_results = sorted(results, key=lambda x: x[0].value)
     
     print("\n##### L2 Threat Modeler Results #####")
-    # Pass the ordered list to the renderer so they print out cleanly grouped
     RenderThreats(grouped_results)
     
     return results

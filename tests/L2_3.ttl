@@ -18,3 +18,11 @@
         :CTL_ClientAuthentication ,
         :CTL_DataInTransitEncryption ,
         :CTL_RateLimiting .
+
+# The Processing Engine (Container) satisfies the outbound requirements 
+# for the Platform when it acts as a client to external services.
+:L2_Platform_Outbound_Controls a :CTL_ControlSatisfaction ;
+    :CTL_isSatisfiedBy :L2_ProcessingEngine ;
+    :CTL_satisfiesRequirementOf :L1_ECommercePlatform ;
+    :CTL_satisfiedControl :CTL_DataInTransitEncryption , 
+                          :CTL_ServerAuthentication .

@@ -147,11 +147,9 @@ def L1_ThreatModeler() -> Set[Tuple[STRIDE, FrozenSet[Tuple[str, str, str, CONTR
     results.update(InternalSystemExternalSystem())
     
     # Sort the results by the first element of the tuple (STRIDE enum value)
-    # This groups all SPOOFING together, all DENIAL_OF_SERVICE together, etc.
     grouped_results = sorted(results, key=lambda x: x[0].value)
     
     print("\n##### L1 Threat Modeler Results #####")
-    # Pass the ordered list to the renderer so they print out cleanly grouped
     RenderThreats(grouped_results)
     
     return results
