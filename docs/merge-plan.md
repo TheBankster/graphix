@@ -35,7 +35,7 @@ DoS/Spoofing to ✅ when `L1_3` loads).
 
 ## Round 2 — DONE (merged `526152e`, converged on Path A)
 
-His 4 commits (**portable rdflib backend**, **implemented L2 threat modeler**, reified
+His 4 commits (**portable rdflib backend**, **implemented L2 threat modeler**,
 **`:CTL_ControlSatisfaction`**) are merged on `vitaly-changes` and converted to our
 `:Control` vocabulary (Path A — see [vocab-decision.md](vocab-decision.md)). Done:
 - rdflib backend integrated — added `RunUpdate` + delegated it; switched inference to
@@ -52,7 +52,7 @@ below for reference.
 ### Original Round-2 forward plan (for reference)
 
 His next 4 commits add a **portable rdflib backend**, an **implemented L2 threat
-modeler**, and a **reified `:CTL_ControlSatisfaction`** model. Full breakdown in
+modeler**, and a **`:CTL_ControlSatisfaction`** model. Full breakdown in
 [coworker-comparison.md](coworker-comparison.md) (Round 2 section). Plan:
 
 ### Decision that now needs a real answer: the vocabulary (escalated)

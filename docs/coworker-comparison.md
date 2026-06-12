@@ -53,10 +53,10 @@ His `L2_modeler.py` stub is now a real **L2 threat modeler** (`L2_ThreatModeler`
   `L1_modeler.py`), plus `CONTROL_TO_STRIDE` and `URI_TO_CONTROL` maps.
 - **`main.py`** `-t` now runs **both** `L1_ThreatModeler` and `L2_ThreatModeler`.
 
-### 3. New schema concept: reified ControlSatisfaction — `9f8dc74`
+### 3. New schema concept: ControlSatisfaction — `9f8dc74`
 - **`:CTL_ControlSatisfaction`** + `:CTL_satisfiesRequirementOf` (target whose
   requirement is met), `:CTL_isSatisfiedBy` (the providing element),
-  `:CTL_satisfiedControl` (which controls). A hand-asserted, **reified** link saying
+  `:CTL_satisfiedControl` (which controls). A hand-asserted link saying
   "L2 element X satisfies L1 requirement Y for control Z" (see `tests/L2_3.ttl`: a WAF
   satisfies the e-commerce interface; the processing engine satisfies the platform's
   outbound controls).

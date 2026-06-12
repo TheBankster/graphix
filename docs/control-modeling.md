@@ -391,7 +391,7 @@ verification Python into the codebase, behind a flag.
 
 **Design notes:**
 - Obligations land on the **exposed API** (the entry point), matching the wiring
-  `:L2_EdgeGateway :protects :L2_WebFrontEndAPI`. There is no reified "flow" object yet.
+  `:L2_EdgeGateway :protects :L2_WebFrontEndAPI`. There is no "flow" object yet.
 - Derivation covers **channel** obligations only (node-control derivation lands in
   Step 8). The satisfaction query already grades both scopes.
 - The actor⇒Untrusted rule is a `BIND` in the derivation query (a convention), not an

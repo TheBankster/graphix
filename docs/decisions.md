@@ -59,7 +59,7 @@ Decide which requirements in the current fixtures should migrate from asserted �
 
 **Context.** The biggest conceptual overlap. Two answers to "is this requirement met, and
 by what?":
-- **His reified `:ControlSatisfaction`** — hand-asserted links, cross-level (an L2 element
+- **His `:ControlSatisfaction`** — hand-asserted links, cross-level (an L2 element
   satisfies an L1 requirement); consumed by the L1/L2 **threat modelers** (✅/⚠️).
 - **Our computed grading** — `:protects`/`:providesControl` + capable tier → Open /
   Potential / Mitigated, with **L3/IaC evidence** confirming provision.

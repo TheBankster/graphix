@@ -16,7 +16,7 @@ described here as the alternative.
 Both bodies of work converged on the same concepts from different directions:
 
 - **Coworker:** `:CTL_*` controls in an `owl:OneOf` `:CTL_ControlSet`, with
-  `:CTL_RequiresControls` / `:CTL_ProvidesControls`, and now a reified
+  `:CTL_RequiresControls` / `:CTL_ProvidesControls`, and now a
   `:CTL_ControlSatisfaction` consumed by the L1 + L2 **threat modelers**.
 - **Us:** `:Control` (+ `:ChannelControl`/`:NodeControl` scope) with
   `:requiresControl` / `:capableOfControl` / `:providesControl` / `:protects`, plus
@@ -39,7 +39,7 @@ canonical.
 
 Controls are first-class `:Control` individuals, scoped `:ChannelControl`/`:NodeControl`;
 requirement/provision via `:requiresControl` / `:capableOfControl` / `:providesControl`
-(+ `:protects`); the coworker's reified satisfaction kept as `:ControlSatisfaction`.
+(+ `:protects`); the coworker's satisfaction kept as `:ControlSatisfaction`.
 
 - **Cost (coworker side):** rename `:CTL_*` → `:Control` vocab in `modeler.py`,
   `L2_modeler.py`, `L1_3.ttl`, `L2_3.ttl`, schema (mechanical; already done on the branch).
@@ -77,7 +77,7 @@ via `:CTL_RequiresControls` / `:CTL_ProvidesControls`; satisfaction via
 | "could provide if configured" | `:capableOfControl` *(no equivalent)* | — |
 | control scope | `:ChannelControl` / `:NodeControl` *(no equivalent)* | — |
 | positioning | `:protects` *(no equivalent)* | — |
-| reified satisfaction | `:ControlSatisfaction` (+ `:satisfiesRequirementOf` / `:isSatisfiedBy` / `:satisfiedControl`) | `:CTL_ControlSatisfaction` (+ `:CTL_*`) |
+| satisfaction | `:ControlSatisfaction` (+ `:satisfiesRequirementOf` / `:isSatisfiedBy` / `:satisfiedControl`) | `:CTL_ControlSatisfaction` (+ `:CTL_*`) |
 | closed-set guard | `allValuesFrom :Control` (kept) | `owl:OneOf :CTL_ControlSet` |
 
 The rows with "no equivalent" are the crux: Path A is a **superset** — Path B would have
@@ -94,7 +94,7 @@ prefers the `:CTL_*` naming aesthetically, the cheaper compromise is **Path A's 
 `:CTL_`-style names** (a naming pass), rather than Path B's flatter shape.
 
 Open follow-on regardless of choice: **bridge the two satisfaction notions** — his
-reified `:ControlSatisfaction` (hand-asserted) and our derived/graded satisfaction
+`:ControlSatisfaction` (hand-asserted) and our derived/graded satisfaction
 (policy + capability + L3 evidence) should become one (our grading could *emit*
 satisfaction instances, or his threat modeler could *read* our grade). See
 [merge-plan.md](merge-plan.md).

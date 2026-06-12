@@ -38,10 +38,10 @@
     rdfs:subClassOf :Graphix_Element ;
     rdfs:comment "Defines the boundary of trust between entities." .
 
-### Control Satisfaction (reified) ###
+### Control Satisfaction ###
 
 # From the coworker's Round-2 design (originally :CTL_ControlSatisfaction), converted to
-# our vocabulary. A reified link asserting "element X satisfies a control requirement of
+# our vocabulary. A link asserting "element X satisfies a control requirement of
 # element Y". This parallels our computed :protects / :providesControl satisfaction; kept
 # here because his L1/L2 threat modelers consume it. (Bridging it to our derived/graded
 # satisfaction is a tracked next step -- see docs/merge-plan.md.)
