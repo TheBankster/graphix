@@ -3,7 +3,6 @@
 
 #################################################################
 #    L2 E-Commerce Platform Example Threat Mitigations
-#    (coworker's reified ControlSatisfaction demo, converted to our vocab)
 #################################################################
 
 # A WAF in front of the web tier, with its general control capability.
@@ -14,7 +13,7 @@
     :TrafficEncryption ,
     :RateLimiting .
 
-# The WAF satisfies multiple requirements for the ECommerce Platform Interface.
+# The WAF satisfies multiple requirements for the ECommerce Platform Interface
 :L2_WAF_Controls a :ControlSatisfaction ;
     :isSatisfiedBy :L2_WebFrontEndWAF ;
     :satisfiesRequirementOf :L1_ECommerceInterface ;
@@ -23,10 +22,12 @@
         :TrafficEncryption ,
         :RateLimiting .
 
-# The Processing Engine (Container) satisfies the outbound requirements
+# The Processing Engine (Container) satisfies the outbound requirements 
 # for the Platform when it acts as a client to external services.
+
 :L2_Platform_Outbound_Controls a :ControlSatisfaction ;
     :isSatisfiedBy :L2_ProcessingEngine ;
     :satisfiesRequirementOf :L1_ECommercePlatform ;
-    :satisfiedControl :TrafficEncryption ,
-                      :ServerAuthentication .
+    :satisfiedControl
+        :TrafficEncryption ,
+        :ServerAuthentication .

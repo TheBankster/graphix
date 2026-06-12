@@ -2,7 +2,7 @@ import json
 import os
 import subprocess
 import tempfile
-from typing import Dict, List, Optional, Set, Tuple
+from typing import List, Optional, Set
 
 from tracing import trace
 
@@ -62,10 +62,12 @@ def _terraform_json(tf_dir: str) -> dict:
         subprocess.run(
             ["terraform", "plan", "-out", plan_file, "-input=false", "-no-color"],
             cwd=tf_dir, env=env, check=True, capture_output=True, text=True)
-        show = subprocess.run(
+
+        trace("🌍 Running terraform show -json...")
+        result = subprocess.run(
             ["terraform", "show", "-json", plan_file],
             cwd=tf_dir, env=env, check=True, capture_output=True, text=True)
-        return json.loads(show.stdout)
+        return json.loads(result.stdout)
     except FileNotFoundError:
         trace("🧨 Error: 'terraform' executable not found in PATH. Please install Terraform to use L3 extraction.")
         raise
