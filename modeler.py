@@ -36,7 +36,7 @@ def RenderThreats(results: Iterable[Tuple[STRIDE, FrozenSet[Tuple[str, str, str,
         
         # Determine if the ENTIRE category is mitigated (True if ALL entries are true)
         all_mitigated = all(entry[4] for entry in entries)
-        category_icon = "✅" if all_mitigated else "⚠️ "
+        category_icon = "✅" if all_mitigated else "🛑"
         
         # Print the overarching threat category header ONCE
         print(f"\n{category_icon} Threat Category: {stride_type.value}")
@@ -44,7 +44,7 @@ def RenderThreats(results: Iterable[Tuple[STRIDE, FrozenSet[Tuple[str, str, str,
         # Print each individual target link under this header
         for entry in entries:
             # Check the status of this specific link
-            item_icon = "✅" if entry[4] else "⚠️ "
+            item_icon = "✅" if entry[4] else "🛑"
             
             print(f"    ---------------------------------------------")
             print(f"    Attacker node:      {entry[0]}")
