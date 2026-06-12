@@ -62,13 +62,13 @@ def _terraform_json(tf_dir: str) -> dict:
         subprocess.run(
             ["terraform", "plan", "-out", plan_file, "-input=false", "-no-color"],
             cwd=tf_dir, env=env, check=True, capture_output=True, text=True)
-    except FileNotFoundError:
-        trace("🧨 Error: 'terraform' executable not found in PATH. Please install Terraform to use L3 extraction.")
-        raise
         show = subprocess.run(
             ["terraform", "show", "-json", plan_file],
             cwd=tf_dir, env=env, check=True, capture_output=True, text=True)
         return json.loads(show.stdout)
+    except FileNotFoundError:
+        trace("🧨 Error: 'terraform' executable not found in PATH. Please install Terraform to use L3 extraction.")
+        raise
     except subprocess.CalledProcessError as e:
         trace(f"🧨 terraform failed: {e.stderr or e.stdout}")
         raise
