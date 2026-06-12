@@ -15,4 +15,3 @@ terraform/.terraform.lock.hcl
 
 # Working docs kept local-only for now (not on the shared repo)
 docs/
-terraform/.terraform.lock.hcl
