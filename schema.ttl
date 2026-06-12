@@ -312,20 +312,25 @@
 # e.g.  :SomeZone a :L2_TrustBoundary , :PublicZone .  Policies (below) are written
 # over these *types* so one policy applies across every environment, not per instance.
 
+# NOTE: PublicZone/ApplicationZone/DataZone are now :L2_TrustBoundary subclasses
+# (L2-only, avoids layer violations). UntrustedZone stays rooted at the generic
+# :Graphix_TrustBoundary on purpose: it represents "outside the org" and is only ever
+# used as a policy *from-type* for external actors -- it is never instantiated as an L2
+# trust boundary, so binding it to L2 would be semantically wrong. (Open for discussion.)
 :UntrustedZone a owl:Class ;
     rdfs:subClassOf :Graphix_TrustBoundary ;
     rdfs:comment "Outside the organisation's control (e.g. the public Internet)." .
 
 :PublicZone a owl:Class ;
-    rdfs:subClassOf :Graphix_TrustBoundary ;
+    rdfs:subClassOf :L2_TrustBoundary ;
     rdfs:comment "Org-controlled but externally exposed tier (DMZ / web tier)." .
 
 :ApplicationZone a owl:Class ;
-    rdfs:subClassOf :Graphix_TrustBoundary ;
+    rdfs:subClassOf :L2_TrustBoundary ;
     rdfs:comment "Internal application / processing tier." .
 
 :DataZone a owl:Class ;
-    rdfs:subClassOf :Graphix_TrustBoundary ;
+    rdfs:subClassOf :L2_TrustBoundary ;
     rdfs:comment "Internal data tier (databases, stores)." .
 
 # --- Boundary-crossing policy: the reusable security standard ---
