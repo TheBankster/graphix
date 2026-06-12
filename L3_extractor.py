@@ -58,6 +58,12 @@ def _terraform_json(tf_dir: str) -> dict:
     try:
         with open(override, "w") as f:
             f.write(_OVERRIDE_TF)
+
+        trace("🌍 Running terraform init...")
+        subprocess.run(
+            ["terraform", "init", "-input=false", "-no-color"],
+            cwd=tf_dir, env=env, check=True, capture_output=True, text=True)
+
         trace("🌍 Running terraform plan (offline, dummy creds)...")
         subprocess.run(
             ["terraform", "plan", "-out", plan_file, "-input=false", "-no-color"],
