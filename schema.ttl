@@ -174,11 +174,6 @@
 
 ### Cross-Level Relationships
 
-:L2_actor_to_L1 a owl:ObjectProperty ;
-    rdfs:domain :L2_Actor ;
-    rdfs:range :L1_Actor ;
-    rdfs:comment "Maps an L2 Actor to its parent L1 Actor." .
-
 :L2_container_to_L1 a owl:ObjectProperty ;
     rdfs:domain :L2_Container ;
     rdfs:range :L1_InternalSystem ;
@@ -278,19 +273,7 @@
         [ a owl:Restriction ; owl:onProperty :providesControl ; owl:hasValue :RateLimiting ] ;
     rdfs:comment "Web Application Firewall: rate limiting is part of its purpose." .
 
-:AuthenticationGateway a owl:Class ;
-    rdfs:subClassOf :L2_Container ,
-        [ a owl:Restriction ; owl:onProperty :providesControl ; owl:hasValue :ClientAuthentication ] ;
-    rdfs:comment "Dedicated authentication gateway / identity-aware proxy: authenticates callers by design." .
-
 ### Capable only when configured (general-purpose components) ###
-
-:ReverseProxy a owl:Class ;
-    rdfs:subClassOf :L2_Container ,
-        [ a owl:Restriction ; owl:onProperty :capableOfControl ; owl:hasValue :RateLimiting ] ,
-        [ a owl:Restriction ; owl:onProperty :capableOfControl ; owl:hasValue :TrafficEncryption ] ,
-        [ a owl:Restriction ; owl:onProperty :capableOfControl ; owl:hasValue :ClientAuthentication ] ;
-    rdfs:comment "Reverse proxy (e.g. nginx): can rate-limit, terminate TLS, and authenticate -- only when configured." .
 
 :APIGatewayContainer a owl:Class ;
     rdfs:subClassOf :L2_Container ,
@@ -298,11 +281,6 @@
         [ a owl:Restriction ; owl:onProperty :capableOfControl ; owl:hasValue :ClientAuthentication ] ,
         [ a owl:Restriction ; owl:onProperty :capableOfControl ; owl:hasValue :TrafficEncryption ] ;
     rdfs:comment "Managed API gateway (e.g. AWS API Gateway): rate limiting, auth, and TLS available via configuration." .
-
-:LoadBalancer a owl:Class ;
-    rdfs:subClassOf :L2_Container ,
-        [ a owl:Restriction ; owl:onProperty :capableOfControl ; owl:hasValue :TrafficEncryption ] ;
-    rdfs:comment "Load balancer: capable of TLS termination when a TLS listener is configured." .
 
 #################################################################
 #    Zone Trust Classification & Boundary-Crossing Policy
@@ -328,10 +306,6 @@
 :ApplicationZone a owl:Class ;
     rdfs:subClassOf :L2_TrustBoundary ;
     rdfs:comment "Internal application / processing tier." .
-
-:DataZone a owl:Class ;
-    rdfs:subClassOf :L2_TrustBoundary ;
-    rdfs:comment "Internal data tier (databases, stores)." .
 
 # --- Boundary-crossing policy: the reusable security standard ---
 # "Traffic crossing from a zone of type X into a zone of type Y mandates controls Z."
@@ -379,12 +353,6 @@
 
 :DataSensitivity a owl:Class ;
     rdfs:comment "A data sensitivity / classification level. Members are the individuals below." .
-
-:Public a :DataSensitivity ;
-    rdfs:label "Public" .
-
-:Internal a :DataSensitivity ;
-    rdfs:label "Internal" .
 
 :Confidential a :DataSensitivity ;
     rdfs:label "Confidential" .
