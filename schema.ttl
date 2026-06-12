@@ -1,6 +1,5 @@
 @prefix : <http://thefirm.com/graphix#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
@@ -13,15 +12,6 @@
 
 ### Base Architecture Elements ###
 
-# The control vocabulary lives in the "Controls (Capabilities)" section below
-# (:Control + :ChannelControl/:NodeControl) and the Control Catalog. Requirement /
-# provision are expressed with :requiresControl / :capableOfControl / :providesControl
-# (see "Control Relationships"). Controls are first-class :Control individuals rather
-# than members of an enumerated set -- the model the team agreed to build on.
-#
-# Closed-set guard (from the coworker's original :CTL_ControlSet design, kept as a
-# validation/typing layer): any value of requires/provides on any element must be a
-# :Control. allValuesFrom (universal), not someValuesFrom.
 :Graphix_Element a owl:Class ;
     rdfs:subClassOf [
         a owl:Restriction ;
@@ -40,11 +30,6 @@
 
 ### Control Satisfaction ###
 
-# From the coworker's Round-2 design (originally :CTL_ControlSatisfaction), converted to
-# our vocabulary. A link asserting "element X satisfies a control requirement of
-# element Y". This parallels our computed :protects / :providesControl satisfaction; kept
-# here because his L1/L2 threat modelers consume it. (Bridging it to our derived/graded
-# satisfaction is a tracked next step -- see docs/merge-plan.md.)
 :ControlSatisfaction a owl:Class ;
     rdfs:comment "An instance where one element satisfies a specific control requirement of another." .
 
@@ -290,11 +275,8 @@
 # e.g.  :SomeZone a :L2_TrustBoundary , :PublicZone .  Policies (below) are written
 # over these *types* so one policy applies across every environment, not per instance.
 
-# NOTE: PublicZone/ApplicationZone/DataZone are now :L2_TrustBoundary subclasses
-# (L2-only, avoids layer violations). UntrustedZone stays rooted at the generic
-# :Graphix_TrustBoundary on purpose: it represents "outside the org" and is only ever
-# used as a policy *from-type* for external actors -- it is never instantiated as an L2
-# trust boundary, so binding it to L2 would be semantically wrong. (Open for discussion.)
+# FIX THIS: We don't need classes where properties would suffice.
+
 :UntrustedZone a owl:Class ;
     rdfs:subClassOf :Graphix_TrustBoundary ;
     rdfs:comment "Outside the organisation's control (e.g. the public Internet)." .
