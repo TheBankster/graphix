@@ -12,3 +12,6 @@ terraform/zz_graphix_override.tf
 # rdflib portable backend's local store
 graphix_data.ttl
 terraform/.terraform.lock.hcl
+
+# Working docs kept local-only for now (not on the shared repo)
+docs/
