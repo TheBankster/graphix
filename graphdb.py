@@ -70,7 +70,7 @@ def ClearRepository(repo_id:str):
         # clears all triples in all contexts (graphs)
         response = requests.delete(url)
         if response.status_code in [200, 204]:
-            trace(f"🧹 Successfully cleared repository '{repo_id}'.")
+            trace("🧹 Successfully cleared the Babel repository.")
         else:
             trace(f"🧨 Failed to clear repository '{repo_id}'. Status: {response.status_code}. Response: {response.text}")
             exit(1)

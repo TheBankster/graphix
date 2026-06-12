@@ -14,7 +14,7 @@ from L3_analyzer import L3_Reconciler
 def main(args):
     LoadGraphixConfig('graphix.config')
 
-    parser = argparse.ArgumentParser(description='GRAPHIX Prototype')
+    parser = argparse.ArgumentParser(description='Babel Prototype')
     parser.add_argument(
         "-s", "--schema",
         help="Path to the .ttl file containing the schema",
@@ -28,7 +28,7 @@ def main(args):
         action="store_const",
         const="ClearRepo",
         dest="func",
-        help="Clear the GRAPHIX repository")
+        help="Clear the Babel repository")
     parser.add_argument(
         "-1", "--semantic-analyzer-1",
         action="store_const",
@@ -69,7 +69,7 @@ def main(args):
     # Connect to graph database
     StartGraphClients()
 
-    # Everything below assumes that the GRAPHIX repository already exists
+    # Everything below assumes that the Babel repository already exists
     if parsed_args.schema:
         trace(f"📥 Schema file provided: {parsed_args.schema}")
         UploadTtl(

@@ -71,4 +71,4 @@ def ClearRepository(repo_id: str) -> None:
     _graph = rdflib.Graph()
     if os.path.exists(_DATA_FILE):
         os.remove(_DATA_FILE)
-    trace(f"🧹 Successfully cleared repository '{repo_id}' (rdflib).")
+    trace("🧹 Successfully cleared the Babel repository (rdflib).")
