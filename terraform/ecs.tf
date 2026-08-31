@@ -69,7 +69,7 @@ resource "aws_ecs_service" "spa" {
     container_port   = 8080
   }
 
-  # GRAPHIX: this service realizes the Web Front-End container in the L2 model.
+  # Babel: this service realizes the Web Front-End container in the L2 model.
   tags = {
     graphix_l2 = "L2_WebFrontEnd"
   }
@@ -133,7 +133,7 @@ resource "aws_ecs_service" "api" {
     container_port   = 8000
   }
 
-  # GRAPHIX: this service realizes the Processing Engine container in the L2 model.
+  # Babel: this service realizes the Processing Engine container in the L2 model.
   tags = {
     graphix_l2 = "L2_ProcessingEngine"
   }

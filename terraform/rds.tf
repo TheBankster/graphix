@@ -33,7 +33,7 @@ resource "aws_db_instance" "postgres" {
   skip_final_snapshot       = false
   final_snapshot_identifier = "${local.name}-postgres-final"
 
-  # GRAPHIX: this database realizes the Product Database container in the L2 model.
+  # Babel: this database realizes the Product Database container in the L2 model.
   tags = {
     Name       = "${local.name}-postgres"
     graphix_l2 = "L2_ProductDatabase"

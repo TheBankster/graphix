@@ -3,7 +3,7 @@ from typing import List, Set, Tuple
 
 ### L3 Reconciliation: as-built (L3) vs intended (L1/L2) ###
 #
-# Two jobs (see docs/control-modeling.md, "Step 9"):
+# Two jobs:
 #   1. Evidence -- propagate the controls an L3 resource demonstrably provides across
 #      its :L3_realizes link onto the L2 element, so the Step 7 satisfaction grading
 #      runs on real IaC config instead of simulated triples.

@@ -1,6 +1,5 @@
 #!/bin/bash
-# Babel — full-pipeline demo (L1 → L2 → L3), ~5 min. Self-narrating; the
-# longer-form talk track in docs/demo.md covers the same arc in more detail.
+# Babel — full-pipeline demo (L1 → L2 → L3), ~5 min. Self-narrating.
 # Runs against the backend set in graphix.config (default: GraphDB).
 #
 # Usage:
@@ -12,7 +11,7 @@
 # The framing, the rollups and the before/after panel are computed here in the
 # script; the graph results themselves are the engine's own, indented under the
 # command that produced them. Presentation-only edits: the repeated connection
-# preamble is dropped after step 1; the graphix# namespace prefix is stripped
+# preamble is dropped after step 1; the ontology namespace prefix is stripped
 # off URIs; and the threat modeler's five-line-per-threat blocks are condensed
 # to one line each (dropping the "mitigating entity" column) so a full threat
 # set fits on screen. Run `python3 main.py -t` directly for the unabridged form.

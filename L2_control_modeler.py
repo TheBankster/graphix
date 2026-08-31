@@ -3,7 +3,7 @@ from typing import List, Tuple
 
 ### L2 Control Modeling ###
 #
-# Two stages (see docs/control-modeling.md):
+# Two stages:
 #   1. Derivation  -- materialize :requiresControl obligations from the
 #      boundary-crossing policy: walk each call edge, read the caller/callee zone
 #      types, match a :BoundaryCrossingPolicy, and assert the controls it mandates

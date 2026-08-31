@@ -24,7 +24,7 @@ def LoadGraphixConfig(configFile: str) -> None:
         # Build the absolute path to the config file
         config_path = os.path.join(program_dir, configFile)
         if not os.path.exists(config_path):
-            raise FileNotFoundError(f"Graphix config file not found: {configFile}")
+            raise FileNotFoundError(f"Babel config file not found: {configFile}")
 
         with open(config_path, "rb") as f:
             config = tomllib.load(f)

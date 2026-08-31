@@ -9,8 +9,7 @@ from tracing import trace
 ### L3 IaC Extractor ###
 #
 # Turns Terraform (the as-built infrastructure) into L3 RDF individuals that the
-# graph can reconcile against the L1/L2 model (the intended architecture). See
-# docs/control-modeling.md, "Step 9".
+# graph can reconcile against the L1/L2 model (the intended architecture).
 #
 # Two things are extracted per significant resource:
 #   1. Correspondence -- a `graphix_l2` resource tag declares which L2 element this

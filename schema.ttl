@@ -109,7 +109,7 @@
 :Control a owl:Class ;
     rdfs:comment "A security control / capability that mitigates one or more threats. Members are enumerated as individuals in the Control Catalog below." .
 
-# Control scope determines how a requirement is satisfied (see docs/control-modeling.md):
+# Control scope determines how a requirement is satisfied:
 
 :ChannelControl a owl:Class ;
     rdfs:subClassOf :Control ;
@@ -243,13 +243,13 @@
 # once on the class via an OWL hasValue restriction, so any instance of the
 # archetype inherits it under inference -- no per-instance triples needed.
 #
-# Two tiers (see docs/control-modeling.md):
+# Two tiers:
 #   - providesControl : the control is the component's purpose (holds by design).
 #   - capableOfControl: the component can supply it only when configured; the
 #                       realized :providesControl is confirmed later from L3 evidence.
 #
 # NOTE: hasValue inference requires an OWL-level ruleset in GraphDB (e.g. OWL-RL /
-# RDFS-Plus); plain RDFS will not materialize these. See progress doc.
+# RDFS-Plus); plain RDFS will not materialize these.
 
 ### Provides by design (the control is the component's job) ###
 

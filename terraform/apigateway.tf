@@ -10,7 +10,7 @@ resource "aws_apigatewayv2_api" "main" {
     allow_headers = ["authorization", "content-type"]
   }
 
-  # GRAPHIX: this API gateway realizes the public edge gateway in the L2 model.
+  # Babel: this API gateway realizes the public edge gateway in the L2 model.
   tags = {
     graphix_l2 = "L2_EdgeGateway"
   }

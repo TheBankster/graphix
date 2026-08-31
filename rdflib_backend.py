@@ -13,7 +13,7 @@ def _infer(g: rdflib.Graph) -> None:
     # OWL2-RL (not just RDFS): needed so owl:hasValue archetype restrictions, owl:unionOf
     # domains, subproperty entailment, etc. materialise -- the local mirror of GraphDB's
     # owl2-rl-optimized ruleset. Under RDFS_Semantics the control-provider "capable" tier
-    # is inert (POTENTIAL collapses to OPEN; see docs/control-modeling.md Step 3).
+    # is inert (POTENTIAL collapses to OPEN).
     owlrl.DeductiveClosure(owlrl.OWLRL_Semantics).expand(g)
 
 def _load() -> rdflib.Graph:

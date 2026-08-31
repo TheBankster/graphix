@@ -13,5 +13,5 @@ terraform/zz_graphix_override.tf
 graphix_data.ttl
 terraform/.terraform.lock.hcl
 
-# Working docs kept local-only for now (not on the shared repo)
+# Local working notes.
 docs/
